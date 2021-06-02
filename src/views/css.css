@@ -1,0 +1,16 @@
+.ant-avatar{
+    width: 109px;
+    height: 40px;
+    border-radius: 0;
+}
+.ant-page-header-heading-title{
+    font-size: 20px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+.ant-table.ant-table-small .ant-table-title, .ant-table.ant-table-small .ant-table-footer, .ant-table.ant-table-small .ant-table-thead > tr > th, .ant-table.ant-table-small .ant-table-tbody > tr > td, .ant-table.ant-table-small tfoot > tr > th, .ant-table.ant-table-small tfoot > tr > td{
+    padding: 6px 6px;
+}
+.ant-upload-list-item{
+    margin-top: 0px;
+}
