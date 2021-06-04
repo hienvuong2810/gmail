@@ -17,7 +17,8 @@ const initState = {
         checked: false,
         url: ""
     },
-    mailRecoverChecked: true
+    mailRecoverChecked: true,
+    mailRecover: ""
 }
 
 export default function reducer(state = {...initState}, action){
@@ -67,6 +68,32 @@ export default function reducer(state = {...initState}, action){
             return {
                 ...state,
                 password: payload
+            }
+        case ACTIONS.ADD_MAIL_RECOVER_CHECKED:
+            return {
+                ...state,
+                mailRecoverChecked: !state.mailRecoverChecked
+            }
+        case ACTIONS.MAIL_RECOVER:
+            return {
+                ...state,
+                mailRecover: payload
+            }
+        case ACTIONS.AVATAR_CHECKED:
+            return {
+                ...state,
+                avatar :{
+                    ...state.avatar,
+                    checked: !state.avatar.checked
+                }
+            }
+        case ACTIONS.SET_AVATAR:
+            return {
+                ...state,
+                avatar:{
+                    ...state.avatar,
+                    url: payload
+                }
             }
         default:
             return state

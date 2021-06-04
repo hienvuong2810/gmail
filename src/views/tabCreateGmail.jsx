@@ -1,7 +1,7 @@
 import React from "react";
 import { Tabs, Row, Col, Radio, Input, Checkbox, Upload, Button, notification  } from "antd";
 const { TabPane } = Tabs;
-import { UploadOutlined } from "@ant-design/icons";
+import { FileImageFilled } from "@ant-design/icons";
 import "./css.css";
 import { connect } from "react-redux";
 
@@ -82,6 +82,33 @@ class App extends React.Component {
       message: title,
       description: content,
     });
+  }
+
+  onChangeMailRecoverChecked(){
+    this.props.dispatch({
+      type: "ADD_MAIL_RECOVER_CHECKED"
+    })
+  }
+
+  onChangeMailRecover(e){
+    this.props.dispatch({
+      type: "MAIL_RECOVER",
+      payload: e.target.value
+    })
+  }
+
+  onChangeAvatar(info){
+    this.props.dispatch({
+      type: "SET_AVATAR",
+      payload: info.path
+    })
+    return false
+  }
+
+  onChangeAvatarChecked(){
+    this.props.dispatch({
+      type: "AVATAR_CHECKED"
+    })
   }
   render() {
     return (
@@ -238,20 +265,37 @@ class App extends React.Component {
 
             <Col span={4.8}>
               <div style={{ display: "flex", flexDirection: "column" }}>
-                <Checkbox checked value={1}>
+                <Checkbox
+                  onChange={this.onChangeMailRecoverChecked.bind(this)}
+                  checked={this.props.setting.mailRecoverChecked}
+                >
                   Thêm mail khôi phục:
                 </Checkbox>
-                <Input></Input>
+                <Input
+                  disabled={!this.props.setting.mailRecoverChecked}
+                  onChange={this.onChangeMailRecover.bind(this)}
+                  value={this.props.setting.mailRecover}
+                >
+                
+                </Input>
               </div>
             </Col>
 
             <Col span={4.8}>
               <div style={{ display: "flex", flexDirection: "column" }}>
-                <Checkbox checked value={1}>
-                  <Upload previewFile={false}>
-                    <Button icon={<UploadOutlined />}>Chọn avatar</Button>
-                  </Upload>
+                <Checkbox
+                  onChange={this.onChangeAvatarChecked.bind(this)}
+                  checked={this.props.setting.avatar.checked}
+                >
+                <Upload
+                  maxCount={1}
+                  accept="image/png, image/jpeg"
+                  beforeUpload={this.onChangeAvatar.bind(this)}
+                >
+                  <Button disabled={!this.props.setting.avatar.checked}><FileImageFilled /> Chon file avatar</Button>
+                </Upload>
                 </Checkbox>
+
               </div>
             </Col>
           </Row>
