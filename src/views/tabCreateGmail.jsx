@@ -1,7 +1,7 @@
 import React from "react";
-import { Tabs, Row, Col, Radio, Input, Checkbox, Upload, Button, notification  } from "antd";
+import { Tabs, Row, Col, Radio, Input, Checkbox, Upload, Button, notification,Tooltip   } from "antd";
 const { TabPane } = Tabs;
-import { FileImageFilled } from "@ant-design/icons";
+import { FileImageFilled,UndoOutlined } from "@ant-design/icons";
 import "./css.css";
 import { connect } from "react-redux";
 
@@ -110,6 +110,10 @@ class App extends React.Component {
       type: "AVATAR_CHECKED"
     })
   }
+
+  onClickReloadIP(){
+    console.log("ád")
+  }
   render() {
     return (
       <TabPane {...this.props}>
@@ -176,13 +180,33 @@ class App extends React.Component {
                 value={this.props.setting.ip.checked}
                 style={{ display: "flex", justifyContent: "space-evenly" }}
               >
-                <Radio value={1}>Không đổi</Radio>
-                <Radio value={2}>Tinsoft</Radio>
-                <Radio value={3}>Dcom</Radio>
+                <Col span={8}>
+                  <Radio value={1}>Không đổi</Radio>
+                  <div style={{ marginTop: "25px", width:"80%"}}>
+                    <Input addonBefore="Địa chỉ IP" suffix={
+                      <UndoOutlined   onClick={this.onClickReloadIP.bind(this)}/>
+                    } />
+                  </div>
+
+                </Col>
+                <Col span={8}>
+                  <Radio value={2}>Dcom</Radio>
+                  <div style={{ marginTop: "25px", width:"80% "}}>
+                    <Input
+                     disabled={this.props.setting.ip.checked == 2 ? false : true}
+                     addonBefore="Tên Dcom" />
+                  </div>
+                </Col>
+                <Col span={8}>
+                  <Radio value={3}>Tinsoft</Radio>
+                  <div style={{ marginTop: "25px" }}>
+                    <Input
+                     disabled={this.props.setting.ip.checked == 3 ? false : true}
+                     addonBefore="API KEY" />
+                  </div>
+                </Col>
               </Radio.Group>
-              <div style={{ marginTop: "25px" }}>
-                <Input addonBefore="API KEY" />
-              </div>
+
             </Col>
           </Row>
 

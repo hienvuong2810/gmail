@@ -4,8 +4,10 @@ const initState = {
     otpChoose: 1,
     otpAPIKEY: "",
     ip: {
+        ipAddress: "0.0.0.0",
         checked: 1,
-        value: ""
+        dcomName: "",
+        apiTinsoft: ""
     },
     passwordDefaultChecked: false,
     password: "softwaremmo.com",
