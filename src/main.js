@@ -2,6 +2,11 @@ const { app, BrowserWindow } = require('electron');
 const path = require('path');
 const fs = require("fs")
 const { ipcMain } = require('electron')
+const isDev = require('electron-is-dev');
+
+let myWindow = null
+const gotTheLock = app.requestSingleInstanceLock()
+
 // const { Cluster } = require('puppeteer-cluster')
 // const vanillaPuppeteer = require('puppeteer')
 // const puppeteerAfp = require('puppeteer-afp');
@@ -14,13 +19,16 @@ const {Worker} = require("worker_threads");
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
   app.quit();
 }
-const bytenode = require('bytenode');
-const { exitCode } = require('process');
-bytenode.compileFile({
-  filename: './src/workers.js',
-  output: './src/workers-byte.jsc',
-  compileAsModule: true
-})
+
+  const bytenode = require('bytenode');
+  const { exitCode } = require('process');
+  bytenode.compileFile({
+    filename: './src/workers.js',
+    output: './src/workers-byte.jsc',
+    compileAsModule: true
+  })
+
+
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -140,29 +148,35 @@ async function main() {
 
 // Let's go
 array = []
-ipcMain.on("click",  (event, arg) => {
-  
-    for(x = 0; x< 1 ; x++ ){
 
-      let worker = new Worker(
-        `
-          console.log("hello world")
-        `
-        ,
-      { eval: true });
+ipcMain.on("click", async  (event, arg) => {
+    const otp = require("./otp/OtpStrategy")
+    const Ship = new otp.Shipping();
+    var ups = new otp.OtpSMS();
+    Ship.setStrategy(ups);
+    var result =  await Ship.getInfo()
+    console.log(result.data.balance)
+    // for(x = 0; x< 1 ; x++ ){
+
+    //   let worker = new Worker(
+    //     `
+    //       console.log("hello world")
+    //     `
+    //     ,
+    //   { eval: true });
    
-      // worker1 = new Worker("./src/work.js");
-      // worker2 = new Worker("./src/work.js");
-      worker.on("message", result => {
-        console.log(`${result.num}th Fibonacci Number: ${result.fib} & ${worker.threadId}`);
+    //   // worker1 = new Worker("./src/work.js");
+    //   // worker2 = new Worker("./src/work.js");
+    //   worker.on("message", result => {
+    //     console.log(`${result.num}th Fibonacci Number: ${result.fib} & ${worker.threadId}`);
         
 
-      });
-      worker.on("exit",exitCode =>{
-        console.log(exitCode)
-      })
-      worker.postMessage({num: 2});
-    }
+    //   });
+    //   worker.on("exit",exitCode =>{
+    //     console.log(exitCode)
+    //   })
+    //   worker.postMessage({num: 2});
+    // }
    
 
 })

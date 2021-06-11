@@ -39,7 +39,10 @@ export default function reducer(state = {...initState}, action){
         case ACTIONS.IP_CHOOSE:
                 return {
                     ...state,
-                    ip: payload,
+                    ip: {
+                        ...state.ip,
+                        checked: payload
+                    },
                 }
         case ACTIONS.OPEN_NOT_SECURE:
             return {
@@ -95,6 +98,22 @@ export default function reducer(state = {...initState}, action){
                 avatar:{
                     ...state.avatar,
                     url: payload
+                }
+            }
+        case ACTIONS.DCOM_NAME:
+            return {
+                ...state,
+                ip:{
+                    ...state.ip,
+                    dcomName: payload
+                }
+            }
+        case ACTIONS.TINSOFT:
+            return {
+                ...state,
+                ip:{
+                    ...state.ip,
+                    apiTinsoft: payload
                 }
             }
         default:

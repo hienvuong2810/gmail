@@ -7,22 +7,22 @@ import { connect } from "react-redux";
 
 class App extends React.Component {
   onChangeOTPSMS(e) {
-    this.props.dispatch({ type: "OTP_SMS_CHOOSE", payload: e.target.value });
+    this.props.dispatch({
+       type: "OTP_SMS_CHOOSE", 
+       payload: e.target.value 
+    });
   }
   onChangeIP(e) {       
     this.props.dispatch({
       type: "IP_CHOOSE",
-      payload: {
-        checked: e.target.value,
-        value: this.props.setting.ip.value,
-      },
+      payload:  e.target.value,
     });
   }
   onCheckNotSecure(){
-      this.props.dispatch({
-          type: "OPEN_NOT_SECURE",
-          payload: !this.props.setting.notSecureChecked
-      })
+    this.props.dispatch({
+        type: "OPEN_NOT_SECURE",
+        payload: !this.props.setting.notSecureChecked
+    })
   }
   
   onCheckOpenIMAP(){
@@ -111,9 +111,23 @@ class App extends React.Component {
     })
   }
 
+  onChangeDcomName(e){
+    this.props.dispatch({
+      type: "DCOM_NAME",
+      payload: e.target.value
+    })
+  }
+
+  onChangeTinsoft(e){
+    this.props.dispatch({
+      type: "TINSOFT",
+      payload: e.target.value
+    })
+  }
   onClickReloadIP(){
     console.log("ád")
   }
+
   render() {
     return (
       <TabPane {...this.props}>
@@ -139,14 +153,13 @@ class App extends React.Component {
             </h1>
             <Col span={24}>
               <Radio.Group
+                
                 onChange={this.onChangeOTPSMS.bind(this)}
                 value={this.props.setting.otpChoose}
                 style={{ display: "flex", justifyContent: "space-evenly" }}
               >
                 <Radio value={1}>Otpsim</Radio>
                 <Radio value={2}>Chothuesimcode</Radio>
-                <Radio value={3}>Thuesms</Radio>
-                <Radio value={4}>Trumotp</Radio>
               </Radio.Group>
               <div style={{ marginTop: "25px" }}>
                 <Input addonBefore="API KEY"  value={this.props.setting.otpAPIKEY} onChange={this.onChangeOtpAPIKEY.bind(this)} />
@@ -183,7 +196,9 @@ class App extends React.Component {
                 <Col span={8}>
                   <Radio value={1}>Không đổi</Radio>
                   <div style={{ marginTop: "25px", width:"80%"}}>
-                    <Input addonBefore="Địa chỉ IP" suffix={
+                    <Input 
+                      value={this.props.setting.ip.ipAddress}
+                      addonBefore="Địa chỉ IP" suffix={
                       <UndoOutlined   onClick={this.onClickReloadIP.bind(this)}/>
                     } />
                   </div>
@@ -193,14 +208,18 @@ class App extends React.Component {
                   <Radio value={2}>Dcom</Radio>
                   <div style={{ marginTop: "25px", width:"80% "}}>
                     <Input
-                     disabled={this.props.setting.ip.checked == 2 ? false : true}
-                     addonBefore="Tên Dcom" />
+                      onChange={this.onChangeDcomName.bind(this)}
+                      value={this.props.setting.ip.dcomName}
+                      disabled={this.props.setting.ip.checked == 2 ? false : true}
+                      addonBefore="Tên Dcom" />
                   </div>
                 </Col>
                 <Col span={8}>
                   <Radio value={3}>Tinsoft</Radio>
                   <div style={{ marginTop: "25px" }}>
                     <Input
+                     onChange={this.onChangeTinsoft.bind(this)}
+                     value={this.props.setting.ip.apiTinsoft}
                      disabled={this.props.setting.ip.checked == 3 ? false : true}
                      addonBefore="API KEY" />
                   </div>

@@ -1,5 +1,5 @@
 const {parentPort} = require("worker_threads");
-const puppeteer = require("puppeteer")
+//const puppeteer = require("puppeteer")
 parentPort.on("message", data => {
   if(!data.case){
       parentPort.postMessage({num: data.num, fib: getFib(data.num)});

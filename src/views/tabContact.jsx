@@ -6,10 +6,7 @@ export default class Dashboard extends React.Component{
     render(){
         return(
             <TabPane {...this.props}>
-                <div style= {{height:"374.6px"}}>
-                    Contact
-                </div>
-                <div >
+                <div style= {{position: "absolute"}}>
                     Contact
                 </div>
             </TabPane>

@@ -1,53 +1,55 @@
-import React from 'react';
+import React, {useState } from 'react';
 import {Tabs, Table } from 'antd';
 import "./css.css"
+const { Column, ColumnGroup } = Table;
+
 const { TabPane } = Tabs;
 const dataSource = [
     {
       key: '1',
-      name: 'Mike',
-      age: 32,
+      name: 'hienvuong2810@gmail.com',
+      age: "heusoghiesohg",
       address: '10 Downing Street',
     },
     {
       key: '2',
-      name: 'John',
-      age: 42,
+      name: 'hienvuong2810@gmail.com',
+      age: "heusoghiesohg",
       address: '10 Downing Street',
     },
     {
         key: '3',
-        name: 'Mike',
-        age: 32,
+        name: 'hienvuong2810@gmail.com',
+        age: "heusoghiesohg",
         address: '10 Downing Street',
       },
       {
         key: '4',
-        name: 'John',
+        name: 'hienvuong2810@gmail.com',
         age: 42,
         address: '10 Downing Street',
       },
       {
         key: '5',
-        name: 'Mike',
+        name: 'hienvuong2810@gmail.com',
         age: 32,
         address: '10 Downing Street',
       },
       {
         key: '6',
-        name: 'John',
+        name: 'hienvuong2810@gmail.com',
         age: 42,
         address: '10 Downing Street',
       },
       {
         key: '7',
-        name: 'Mike',
+        name: 'hienvuong2810@gmail.com',
         age: 32,
         address: '10 Downing Street',
       },
       {
         key: '8',
-        name: 'John',
+        name: 'hienvuong2810@gmail.com',
         age: 42,
         address: '10 Downing Street',
       },
@@ -107,26 +109,36 @@ const dataSource = [
       dataIndex: 'name',
       key: 'name',
       ellipsis: true,
-      width: "200px",
+      width: "40%",
       editable: true,
     },
     {
       title: 'Password',
       dataIndex: 'age',
       key: 'age',
-      width: "100px",
+      ellipsis: true,
+      editable: true,
+      width: "40%",
     },
     {
-      title: 'Address',
+      title: 'Profile',
       dataIndex: 'address',
       key: 'address',
       ellipsis: true,
+      width: "20%",
+      render: (text, record, index) => (
+        <div>
+          <a>Open profile {index}</a>
+        </div>
+      )
     },
+
   ];
-export default class Dashboard extends React.Component{
-    render(){
+  
+const Dashboard = (props) =>{
+  const [selectionType, setSelectionType] = useState('checkbox');
         return(
-            <TabPane {...this.props}>
+            <TabPane {...props}>
                 <Table 
                     dataSource={dataSource} 
                     columns={columns}  
@@ -134,9 +146,14 @@ export default class Dashboard extends React.Component{
                     size="small" 
                     pagination={false}
                     bordered
+                    expandable={
+                      {
+                        columnWidth: 100
+                      }
+                    }
                 />
             </TabPane>
 
         )
-    }
 }
+export default Dashboard
