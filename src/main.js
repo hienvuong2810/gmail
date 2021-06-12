@@ -148,14 +148,35 @@ async function main() {
 
 // Let's go
 array = []
+let properties = {
+  otpChoose: 0,
+  otpAPIKEY: "",
+  ip: {
+      ipAddress: "0.0.0.0",
+      checked: 1,
+      dcomName: "",
+      apiTinsoft: ""
+  },
+  passwordDefaultChecked: false,
+  password: "softwaremmo.com",
+  notSecureChecked: true,
+  openImapPOP3Checked: true,
+  saveProfileChecked: true,
+  deletePhoneChecked: true,
+  avatar: {
+      checked: false,
+      url: ""
+  },
+  mailRecoverChecked: true,
+  mailRecover: "",
+  threads: 1
+}
 
+const OTP = require("./otp/OtpStrategy")
+const SMS = new OTP.SMS();
 ipcMain.on("click", async  (event, arg) => {
-    const otp = require("./otp/OtpStrategy")
-    const Ship = new otp.Shipping();
-    var ups = new otp.OtpSMS();
-    Ship.setStrategy(ups);
-    var result =  await Ship.getInfo()
-    console.log(result.data.balance)
+    var result =  await SMS.getInfo()
+    console.log(result)
     // for(x = 0; x< 1 ; x++ ){
 
     //   let worker = new Worker(
@@ -182,3 +203,59 @@ ipcMain.on("click", async  (event, arg) => {
 })
 
 
+ipcMain.on("u",(event, arg)=>{
+    switch (arg.case){
+      case 1:
+        properties.otpChoose  = arg.value
+        SMS.setStrategy(arg.value)
+        break;
+      case 2: 
+        properties.otpAPIKEY = arg.value
+        SMS.setApiKey(arg.value)
+        break;
+      case 3: 
+        properties.ip.checked = arg.value
+        break;
+      case 4: 
+        properties.ip.dcomName = arg.value
+        break;
+      case 5: 
+        properties.ip.apiTinsoft = arg.value
+        break;
+      case 6:
+        properties.passwordDefaultChecked = arg.value
+        break; 
+      case 7:
+        properties.password = arg.value
+        break; 
+      case 8:
+        properties.notSecureChecked = arg.value
+        break;  
+      case 9:
+        properties.openImapPOP3Checked = arg.value
+        break;
+      case 10:
+        properties.saveProfileChecked = arg.value
+        break; 
+      case 11:
+        properties.deletePhoneChecked = arg.value
+        break; 
+      case 12:
+        properties.avatar.checked = arg.value
+        break;  
+      case 13:
+        properties.avatar.url = arg.value
+        break;  
+      case 14:
+        properties.mailRecoverChecked = arg.value
+        break; 
+      case 15:
+        properties.mailRecover = arg.value
+        break; 
+      case 16:
+        properties.threads = arg.value
+        break;
+      default:
+        break;
+    }
+})
