@@ -1,5 +1,5 @@
 import {INCRESE_REGISTER_SUCCESS, INCRESE_REGISTER_FAIL, START, STOP, THREADS} from '../actions/footerAction.js'
-
+import {ipcRenderer} from 'electron'
 const initState = {
     registerSuccess: 0,
     registerFail: 0,
@@ -34,6 +34,7 @@ export default function reducer(state = {...initState}, action){
                 buttonPauseEnable: false  
             }
         case THREADS:
+            ipcRenderer.send("u", {case: 16, value: payload})
             return {
                 ...state,
                 threads: payload
