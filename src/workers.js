@@ -1,3 +1,4 @@
+"use strict";
 const {
 	parentPort,
 	workerData
@@ -80,55 +81,112 @@ async function runEmulator() {
 	await page.type("[name='ConfirmPasswd']", "Vuong2310.");
 
 	await page.waitForTimeout(2000);
-	await page.click("[name='accountDetailsNext']");
+	await page.click("#accountDetailsNext");
 
 	let orderID;
 	let checkSMS = false;
-
+	let flag = false;
+	let lengt = 0
 	do {
 		do {
+			console.log("get phone")
 			orderID = await shareData.getPhone();
+			await page.waitForTimeout(2000);
+			console.log("waiting")
 			await page.waitForSelector("#phoneNumberId", {
 				visible: true,
 			});
+			console.log("typing")
+			await page.waitForTimeout(2000);
 			await page.click("#phoneNumberId", {
 				clickCount: 3
 			});
-			await page.tpye("#phoneNumberId", orderID[1]);
+			await page.type("#phoneNumberId", orderID[1]);
+			console.log("click next")
 			await page.waitForTimeout(2000);
-			await page
-				.$x(
-					"/html/body/div[1]/div[1]/div[2]/div[1]/div[2]/div/div/div[2]/div/div[2]/div/div[1]/div/div/button"
-				)[0]
-				.click();
+			(await page.$x("/html/body/div[1]/div[1]/div[2]/div[1]/div[2]/div/div/div[2]/div/div[2]/div/div[1]/div/div/button"))[0].click();
 			await page.waitForTimeout(3000);
-		} while ((await page.$x('//div[@class="o6cuMc"]').length) !== 0);
+			lengt = (await page.$x("//div[@class='o6cuMc']")).length
+			flag =  lengt !== 0
+			console.log("flag "+ flag)
+			console.log("lengt "+ lengt)
+			await page.waitForTimeout(3000);
+		} while (flag);
 
 		let code;
 		// each count is 2s
 		for (let count = 0; count < 30; count++) {
 			code = await shareData.getCode(orderID[0]);
+			console.log("get code: " + code)
 			await page.waitForTimeout(2000);
-			if (code) {
+			if (!code) {
+				console.log("get code not ok")
 				continue;
 			}
 			checkSMS = true;
 			break;
 		}
 		if (checkSMS == false) {
+			console.log("get code fail")
 			shareData.cancel(orderID[0]);
-			await page.$x('(//div[@class="VfPpkd-RLmnJb"])[1]')[0].click();
+			(await page.$x('(//div[@class="VfPpkd-RLmnJb"])[1]'))[0].click();
 			await page.waitForTimeout(2000);
 		} else {
+			console.log("fill code")
 			await page.waitForSelector("#code", {
 				visible: true,
 			});
 			await page.click("#code");
 			await page.type("#code", code);
 			await page.waitForTimeout(2000);
-			await page.$x('/html/body/div[1]/div[1]/div[2]/div[1]/div[2]/div/div/div[2]/div/div[2]/div[2]/div[1]/div/div/button')[0].click();
+			(await page.$x('/html/body/div[1]/div[1]/div[2]/div[1]/div[2]/div/div/div[2]/div/div[2]/div[2]/div[1]/div/div/button'))[0].click();
 		}
 	} while (!checkSMS);
+	console.log("clear phone")
+	await page.waitForTimeout(2000);
+	await page.waitForSelector("#phoneNumberId", {
+		visible: true,
+	})
+	await page.click("#phoneNumberId", {
+		clickCount: 3
+	});
+	await page.keyboard.press('Backspace');
+	await page.waitForTimeout(2000);
+	//mail recover
+	console.log("fill day")
+	await page.click("#day");
+	await page.type("#day", Math.floor(Math.random() * (25 - 1 + 1) + 1).toString());
+	await page.waitForTimeout(2000);
+
+	console.log("fill month")
+	await page.click("#month");
+	await page.select("#month", Math.floor(Math.random() * (12 - 1 + 1) + 1).toString());
+	await page.waitForTimeout(2000);
+
+	console.log("fill year")
+	await page.click("#year");
+	await page.type("#year", Math.floor(Math.random() * (1990 - 2005 + 1) + 2005).toString());
+	await page.waitForTimeout(2000);
+
+	console.log("fill gender")
+	await page.click("#gender");
+	await page.select("#gender", Math.floor(Math.random() * (2 - 1 + 1) + 1).toString());
+	await page.waitForTimeout(2000);
+
+	(await page.$x('/html/body/div[1]/div[1]/div[2]/div[1]/div[2]/div/div/div[2]/div/div[2]/div/div[1]/div/div/button'))[0].click();
+
+	await page.waitForSelector("#termsofserviceNext", {
+		visible: true,
+	})
+
+	let space = 100
+	for (let i = 0; i< 10; i++){
+		window.scroll(0,space)
+		space+=200
+		await page.waitForTimeout(1000);
+	}
+
+	await page.click("#termsofserviceNext")
 }
 runEmulator();
 

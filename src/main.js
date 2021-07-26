@@ -1,3 +1,4 @@
+"use strict";
 const {
 	app,
 	BrowserWindow
@@ -12,9 +13,6 @@ const isDev = require("electron-is-dev");
 let myWindow = null;
 const gotTheLock = app.requestSingleInstanceLock();
 
-// const { Cluster } = require('puppeteer-cluster')
-// const vanillaPuppeteer = require('puppeteer')
-// const puppeteerAfp = require('puppeteer-afp');
 const {
 	Worker
 } = require("worker_threads");
@@ -79,75 +77,13 @@ app.on("activate", () => {
 		createWindow();
 	}
 });
+const puppeteer = require("puppeteer");
+
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
-async function main() {
-	// Create a custom puppeteer-extra instance using `addExtra`,
-	// so we could create additional ones with different plugin config.
-	// const puppeteer = addExtra(vanillaPuppeteer)
-	// //puppeteer.use(Stealth())
-	// const browser = await puppeteer.launch({ headless: false,
-	//   args: [
-	//     '-wait-for-browser'
-	//     ]
-	// //   ,     args: [
-	// //   '--no-sandbox',
-	// //   '--disable-setuid-sandbox',
-	// //   '--disable-dev-shm-usage',
-	// //   '--disable-accelerated-2d-canvas',
-	// //   '--no-first-run',
-	// //   '--no-zygote',
-	// //   '--single-process', // <- this one doesn't works in Windows
-	// //   '--disable-gpu'
-	// // ]
-	// , product: "firefox"})
-	// // .then(async browser => {
-	//  let page = await browser.pages()
-	//  page = page[0]
-	// //   console.log(`Testing the stealth plugin..`)
-	//   await page.goto('https://accounts.google.com/signin/v2')
-	//   await page.waitForTimeout(3000)
-	//   await page.click("#identifierId")
-	//   await page.type("#identifierId", "hienvuong2810")
-	//   await page.waitForTimeout(2000)
-	//   await page.click("#identifierNext")
-	//   await page.waitForSelector("#password", {visible: true})
-	//   await page.waitForTimeout(2000)
-	//   await page.click("#password")
-	//   await page.type("#password", "HienVuong2310.", {delay: 500})
-	//   await page.waitForTimeout(2000)
-	//   await page.click("#passwordNext")
-	// await page.goto("https://fingerprintjs.com/demo/", {waitUntil: "networkidle0"})
-	// await page.waitForTimeout(15000)
-	// await page.screenshot({path: "fp.png"})
-	// console.log(`All done, check the screenshots. ✨`)
-	//})
-	// Launch cluster with puppeteer-extra
-	// const cluster = await Cluster.launch({
-	//   puppeteerOptions:{
-	//     headless: false
-	//   },
-	//   puppeteer,
-	//   maxConcurrency: 1,
-	//   concurrency: Cluster.CONCURRENCY_CONTEXT
-	// })
-	// // Define task handler
-	// await cluster.task(async ({ page, data: url }) => {
-	//   await page.goto(url)
-	//   console.log(1)
-	//   const { hostname } = new URL(url)
-	//   await page.screenshot({ path: `${hostname}.png`, fullPage: true })
-	//   cluster.idle()
-	// })
-	// Queue any number of tasks
-	// cluster.queue('https://bot.sannysoft.com')
-	// cluster.queue('http://www.wikipedia.org/')
-	// console.log(`All done, check the screenshots. ✨`)
-}
-
 // Let's go
-array = [];
+let array = [];
 let properties = {
 	otpChoose: 0,
 	otpAPIKEY: "",
@@ -170,20 +106,30 @@ let properties = {
 	mailRecoverChecked: true,
 	mailRecover: "",
 	threads: 1,
+	path: app.getPath("userData")
 };
-var sab = new SharedArrayBuffer(1024);
-var shareData = new Uint8Array(sab);
 
-shareData[0] = "x".charCodeAt(0);
 const OTP = require("./otp/OtpStrategy");
 const SMS = new OTP.SMS();
+
+// const browser = puppeteer.launch({
+// 	headless: false,
+// 	args: ["-wait-for-browser",
+// 	],
+// 	extraPrefsFirefox: {
+// 		'dom.webdriver.enabled': false,
+// 		'useAutomationExtension': false,
+// 		'marionette.enabled': false,
+// 	},
+// 	product: "firefox",
+// 	userDataDir: "E:\\profile"
+// });
 ipcMain.on("click", async (event, arg) => {
 	// var result =  await SMS.getInfo()
 	// console.log(result)
-
+	
 	// array[0] = new Worker("./src/work.js")
-	// array[0].postMessage({prop: SMS})
-	console.log(array);
+	// array[0].
 	// for(x = 0; x< 1 ; x++ ){
 
 	//   let worker = new Worker(
@@ -210,7 +156,7 @@ function newWorker() {
 	let arr = [];
 	arr[0] = null;
 	arr[1] = new Promise((resolve, reject) => {
-		arr[0] = new Worker("./src/workers.js");
+		arr[0] = new Worker("./src/workers.js", {workerData: properties});
 		arr[0].on("message", (message) => {});
 		arr[0].on("exit", (exitCode) => {
 			if (exitCode == 1) {
@@ -224,6 +170,7 @@ function newWorker() {
 }
 
 array[0] = newWorker();
+array[0][0].postMessage({prop: SMS})
 ipcMain.on("u", (event, arg) => {
 	switch (arg.case) {
 		case 1:

@@ -2,17 +2,21 @@ const axios = require('axios').default;
 
 var OtpSMS = function () {
     this.getInfo = async function (apiKey) {
-        // calculations...
         var result = await axios.get("http://otpsim.com/api/users/balance?token=" + apiKey)
-        return result.data
+        return result.data.data.balance
     }
     this.getPhone = async function (apiKey) {
         var result = await axios.get("http://otpsim.com/api/phones/request?token=" + apiKey + "&service=3")
-        return result.data
+        return [result.data.data.session, result.data.data.phone_number]
     }
     this.getCode = async function (apiKey, id) {
         var result = await axios.get("http://otpsim.com/api/sessions/" + id + "?token=" + apiKey)
-        return result.data
+        if(result.data.data.status === 0){
+            return result.data.data.messages[0].otp
+        }else{
+            return ""
+        }
+        
     }
     this.cancel = async function (apiKey, id) {
         var result = await axios.get("http://otpsim.com/api/sessions/cancel?session=" + id + "?token=" + apiKey)
