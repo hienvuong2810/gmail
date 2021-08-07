@@ -13,7 +13,7 @@ class Headers extends React.Component {
 				title={
 					<>
 						<UserOutlined />
-						<span style={{ margin: "10px" }}>hienvuong2810</span>
+						<span style={{ margin: "10px" }}>XS5G8F</span>
 						<Badge
 							style={{ paddingBottom: "5px" }}
 							status="success"
@@ -30,9 +30,6 @@ class Headers extends React.Component {
 				extra={[
 					<Button key="3">Thông báo</Button>,
 					<Button key="2">Cập nhật</Button>,
-					<Button key="1" type="primary">
-						Đăng xuất
-					</Button>,
 				]}
 			></PageHeader>
 		);

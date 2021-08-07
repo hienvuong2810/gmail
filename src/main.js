@@ -17,9 +17,27 @@ const {
 	Worker
 } = require("worker_threads");
 
-// const { addExtra } = require('puppeteer-extra')
-// const Stealth = require('puppeteer-extra-plugin-stealth')
-// require("puppeteer-extra-plugin-stealth")
+const Store = require('electron-store');
+const store = new Store({encryptionKey: 'gjeipgsp'});
+let list = [
+	{
+	  key: 'hienvuong2810@gmail.com',
+	  gmail: 'hienvuong2810@gmail.com',
+	  password: 'heusoghiesohg',
+	  recover: '10 Downing Street'
+	},
+	{
+	  key: 'hienvuong13@gmail.com',
+	  gmail: 'hienvuong13@gmail.com',
+	  password: 'heusoghiesohg',
+	  recover: '10 Downing Street'
+	},
+]
+store.set('list', list)
+ipcMain.handle('iv', (event) => {
+	return store.get('list');
+});
+
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
 	// eslint-disable-line global-require
@@ -77,7 +95,7 @@ app.on("activate", () => {
 		createWindow();
 	}
 });
-const puppeteer = require("puppeteer");
+// const puppeteer = require("puppeteer");
 
 
 // In this file you can include the rest of your app's specific main process
@@ -125,6 +143,8 @@ const SMS = new OTP.SMS();
 // 	userDataDir: "E:\\profile"
 // });
 ipcMain.on("click", async (event, arg) => {
+	store.set('list', [...store.get('list'), {x:1}])
+	console.log(store.get('list'))
 	// var result =  await SMS.getInfo()
 	// console.log(result)
 	
@@ -169,8 +189,8 @@ function newWorker() {
 	return arr;
 }
 
-array[0] = newWorker();
-array[0][0].postMessage({prop: SMS})
+// array[0] = newWorker();
+// array[0][0].postMessage({prop: SMS})
 ipcMain.on("u", (event, arg) => {
 	switch (arg.case) {
 		case 1:

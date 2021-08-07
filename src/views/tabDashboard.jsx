@@ -1,145 +1,54 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { Tabs, Table } from "antd";
 import "./css.css";
 const { Column, ColumnGroup } = Table;
-
+import { connect } from "react-redux";
 const { TabPane } = Tabs;
-const dataSource = [
-	{
-		key: "1",
-		name: "hienvuong2810@gmail.com",
-		age: "heusoghiesohg",
-		address: "10 Downing Street",
-	},
-	{
-		key: "2",
-		name: "hienvuong2810@gmail.com",
-		age: "heusoghiesohg",
-		address: "10 Downing Street",
-	},
-	{
-		key: "3",
-		name: "hienvuong2810@gmail.com",
-		age: "heusoghiesohg",
-		address: "10 Downing Street",
-	},
-	{
-		key: "4",
-		name: "hienvuong2810@gmail.com",
-		age: 42,
-		address: "10 Downing Street",
-	},
-	{
-		key: "5",
-		name: "hienvuong2810@gmail.com",
-		age: 32,
-		address: "10 Downing Street",
-	},
-	{
-		key: "6",
-		name: "hienvuong2810@gmail.com",
-		age: 42,
-		address: "10 Downing Street",
-	},
-	{
-		key: "7",
-		name: "hienvuong2810@gmail.com",
-		age: 32,
-		address: "10 Downing Street",
-	},
-	{
-		key: "8",
-		name: "hienvuong2810@gmail.com",
-		age: 42,
-		address: "10 Downing Street",
-	},
-	{
-		key: "9",
-		name: "Mike",
-		age: 32,
-		address: "10 Downing Street",
-	},
-	{
-		key: "10",
-		name: "John",
-		age: 42,
-		address: "10 Downing Street",
-	},
-	{
-		key: "11",
-		name: "Mike",
-		age: 32,
-		address: "10 Downing Street",
-	},
-	{
-		key: "12",
-		name: "John",
-		age: 42,
-		address: "10 Downing Street",
-	},
-	{
-		key: "13",
-		name: "Mike",
-		age: 32,
-		address: "10 Downing Street",
-	},
-	{
-		key: "14",
-		name: "John",
-		age: 42,
-		address: "10 Downing Street",
-	},
-	{
-		key: "15",
-		name: "Mike",
-		age: 32,
-		address: "10 Downing Street",
-	},
-	{
-		key: "16",
-		name: "John",
-		age: 42,
-		address: "10 Downing Street",
-	},
-];
 	
 const columns = [
 	{
 		title: "Gmail",
-		dataIndex: "name",
-		key: "name",
+		dataIndex: "gmail",
+		key: "gmail",
 		ellipsis: true,
-		width: "40%",
+		width: "30%",
 		editable: true,
 	},
 	{
 		title: "Password",
-		dataIndex: "age",
-		key: "age",
+		dataIndex: "password",
+		key: "password",
 		ellipsis: true,
 		editable: true,
-		width: "40%",
+		width: "30%",
+	},
+	{
+		title: "Mail Recover",
+		dataIndex: "recover",
+		key: "recover",
+		ellipsis: true,
+		editable: true,
+		width: "30%",
 	},
 	{
 		title: "Profile",
-		dataIndex: "address",
-		key: "address",
+		dataIndex: "profile",
+		key: "profile",
 		ellipsis: true,
-		width: "20%",
+		width: "10%",
 		render: (text, record, index) => (
 			<div>
-				<a>Open profile {index}</a>
+				<a id={record.key} >Open</a>
 			</div>
 		),
 	},
 ];
 
 const Dashboard = (props) => {
-	const [selectionType, setSelectionType] = useState("checkbox");
 	return (
 		<TabPane {...props}>
 			<Table
-				dataSource={dataSource}
+				dataSource={props.dashBoard.listMail}
 				columns={columns}
 				scroll={{ y: 340 }}
 				size="small"
@@ -152,4 +61,10 @@ const Dashboard = (props) => {
 		</TabPane>
 	);
 };
-export default Dashboard;
+
+function mapStateToProps(state) {
+	return {
+		dashBoard: state.dashboardTab,
+	};
+}
+export default connect(mapStateToProps)(Dashboard);

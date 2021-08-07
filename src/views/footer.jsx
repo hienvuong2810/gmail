@@ -18,7 +18,7 @@ class Footer extends React.Component {
 	}
 	render() {
 		return (
-			<Row style={{ padding: "0.8rem" }}>
+			<Row style={{ padding: "0.8rem", position:"fixed", bottom: "0", backgroundColor: "#EBECF0" }}>
 				<Col
 					span={8}
 					style={{
@@ -29,10 +29,7 @@ class Footer extends React.Component {
 				>
 					<div style={{ float: "left", textAlign: "right" }}>
 						<Title type="success" level={4}>
-							Thành công:{" "}
-						</Title>
-						<Title type="danger" level={4}>
-							Thất bại:{" "}
+							Tổng số mail:
 						</Title>
 					</div>
 					<div
@@ -45,14 +42,7 @@ class Footer extends React.Component {
 						}}
 					>
 						<Text type="success" style={{ marginBottom: "0.5rem" }}>
-							{this.props.footer.registerSuccess}{" "}
-						</Text>
-						<br></br>
-						<Text
-							type="danger"
-							style={{ float: "left", marginTop: "1.2em" }}
-						>
-							{this.props.footer.registerFail}{" "}
+							{this.props.footer.registerSuccess}
 						</Text>
 					</div>
 				</Col>

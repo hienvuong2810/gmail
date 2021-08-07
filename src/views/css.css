@@ -17,3 +17,68 @@
 .ant-upload-list-item-name{
     max-width: 100px;
 }
+.atm-tech {
+    background-color: #ed1c24;
+    border-radius: 10px;
+    height: 85px;
+    letter-spacing: .1rem;
+    text-align: left;
+    text-transform: uppercase;
+    width: 340px;
+}
+.atm-number {
+    background: linear-gradient(#eee, rgb(255, 255, 255));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    bottom: 45px;
+    font-size: 20px;
+    left: 30px;
+    position: absolute;
+  }
+.atm-name {
+    background: linear-gradient(#eee, rgb(255, 255, 255));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    bottom: 15px;
+    left: 30px;
+    position: absolute;
+}
+.logo-tech{
+    background-image: url('https://www.senbac.com/wp-content/uploads/2018/04/khach-hang-techcombank.png');
+    background-position: 98%;
+    background-repeat: no-repeat;
+    background-size: 80px;
+    display: block;
+}
+.logo-tech:after {
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    content: 'Platinum';
+    display: block;
+    text-align: center;
+    padding-top: 60px;
+}
+.atm-momo {
+    background-color: #b0006e;
+    border-radius: 10px;
+    height: 85px;
+    letter-spacing: .1rem;
+    text-align: left;
+    text-transform: uppercase;
+    width: 340px;
+}
+.logo-momo{
+    background-image: url('https://img.mservice.io/momo-payment/icon/images/logo512.png');
+    background-position: 98%;
+    background-repeat: no-repeat;
+    background-size: 80px;
+    display: block;
+}
+.logo-momo:after {
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    content: 'Platinum';
+    display: block;
+    text-align: center;
+    padding-top: 60px;
+}
