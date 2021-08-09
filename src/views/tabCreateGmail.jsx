@@ -423,6 +423,7 @@ class App extends React.Component {
 									Thêm mail khôi phục:
 								</Checkbox>
 								<Input
+									type='email'
 									disabled={
 										!this.props.setting.mailRecoverChecked
 									}

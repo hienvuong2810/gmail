@@ -16,20 +16,14 @@
   "license": "MIT",
   "config": {
     "forge": {
-      "packagerConfig": {},
+      "packagerConfig": {
+        "icon": "./src/asset/gmail.ico"
+      },
       "makers": [
-        {
-          "name": "@electron-forge/maker-squirrel",
-          "config": {
-            "name": "RegisterGmail",
-            "noMSI": true,
-            "version": "1.0.0"
-          }
-        },
         {
           "name": "@electron-forge/maker-zip",
           "platforms": [
-            "darwin"
+            "win32"
           ]
         },
         {

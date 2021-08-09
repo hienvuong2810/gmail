@@ -69,9 +69,11 @@ const createWindow = () => {
 	mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 	mainWindow.setMenuBarVisibility(false);
 	//mainWindow.setResizable(false)
-	mainWindow.setTitle("Register and Feed Gmail | SoftwareMMO.com");
+	mainWindow.setTitle("Tool Register Gmail | ToolMailMMO.com");
 	// Open the DevTools.
 	mainWindow.webContents.openDevTools();
+
+
 };
 
 // This method will be called when Electron has finished
@@ -95,7 +97,6 @@ app.on("activate", () => {
 		createWindow();
 	}
 });
-// const puppeteer = require("puppeteer");
 
 
 // In this file you can include the rest of your app's specific main process
@@ -143,8 +144,6 @@ const SMS = new OTP.SMS();
 // 	userDataDir: "E:\\profile"
 // });
 ipcMain.on("click", async (event, arg) => {
-	store.set('list', [...store.get('list'), {x:1}])
-	console.log(store.get('list'))
 	// var result =  await SMS.getInfo()
 	// console.log(result)
 	

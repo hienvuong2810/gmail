@@ -17,35 +17,40 @@ import Contact from "./views/tabContact.jsx";
 import Footers from "./views/footer.jsx";
 const { Header, Footer, Content } = Layout;
 const { TabPane } = Tabs;
-console.log("Loaded React.");
+import Splash from "./views/splash/splash.jsx"
 
 const init = async () => {
 	await store.dispatch(initData())
-	ReactDOM.render(
-		<Provider store={store}>
-			<Layout>
-				<Headers />
-				<Layout style={{ padding: "0.8rem", backgroundColor: "white" }}>
-					<Content>
-						<Tabs
-							defaultActiveKey="4"
-							size="large"
-							type="card"
-							centered
-							style={{ width: "100%" }}
-						>
-							<Dashboard tab="Dashboard" key="1" />
-							<CreateGmail tab="Setting Create Gmail" key="2" />
-							{/* <FeedGmail tab="Setting Feed Gmail" key="3"/> */}
-							<Contact tab="Contact" key="4" />
-						</Tabs>
-					</Content>
+	if(true){
+		ReactDOM.render(<Splash/>,document.getElementById("root") );
+	}
+	if(false){
+		ReactDOM.render(
+			<Provider store={store}>
+				<Layout>
+					<Headers />
+					<Layout style={{ padding: "0.8rem", backgroundColor: "white" }}>
+						<Content>
+							<Tabs
+								defaultActiveKey="4"
+								size="large"
+								type="card"
+								centered
+								style={{ width: "100%" }}
+							>
+								<Dashboard tab="Dashboard" key="1" />
+								<CreateGmail tab="Setting Create Gmail" key="2" />
+								{/* <FeedGmail tab="Setting Feed Gmail" key="3"/> */}
+								<Contact tab="Contact" key="4" />
+							</Tabs>
+						</Content>
+					</Layout>
+					<Footers />
 				</Layout>
-				<Footers />
-			</Layout>
-		</Provider>,
-		document.getElementById("root")
-	);
+			</Provider>,
+			document.getElementById("root")
+		);
+	}
 }
  
 init()
