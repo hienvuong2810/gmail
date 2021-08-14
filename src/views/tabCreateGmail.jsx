@@ -325,7 +325,7 @@ class App extends React.Component {
 									Bật không an toàn
 								</Checkbox>
 
-								<Checkbox
+								{/* <Checkbox
 									checked={
 										this.props.setting.openImapPOP3Checked
 									}
@@ -336,7 +336,7 @@ class App extends React.Component {
 									}}
 								>
 									Bật IMAP/POP3
-								</Checkbox>
+								</Checkbox> */}
 							</div>
 						</Col>
 
@@ -435,7 +435,7 @@ class App extends React.Component {
 							</div>
 						</Col>
 
-						<Col span={4.8}>
+						{/* <Col span={4.8}>
 							<div
 								style={{
 									display: "flex",
@@ -466,7 +466,7 @@ class App extends React.Component {
 									</Upload>
 								</Checkbox>
 							</div>
-						</Col>
+						</Col> */}
 					</Row>
 				</div>
 			</TabPane>

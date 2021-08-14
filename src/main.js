@@ -19,21 +19,22 @@ const {
 
 const Store = require('electron-store');
 const store = new Store({encryptionKey: 'gjeipgsp'});
-let list = [
-	{
-	  key: 'hienvuong2810@gmail.com',
-	  gmail: 'hienvuong2810@gmail.com',
-	  password: 'heusoghiesohg',
-	  recover: '10 Downing Street'
-	},
-	{
-	  key: 'hienvuong13@gmail.com',
-	  gmail: 'hienvuong13@gmail.com',
-	  password: 'heusoghiesohg',
-	  recover: '10 Downing Street'
-	},
-]
-store.set('list', list)
+// let list = [
+// 	{
+// 	  key: 'hienvuong2810@gmail.com',
+// 	  gmail: 'hienvuong2810@gmail.com',
+// 	  password: 'heusoghiesohg',
+// 	  recover: '10 Downing Street'
+// 	},
+// 	{
+// 	  key: 'hienvuong13@gmail.com',
+// 	  gmail: 'hienvuong13@gmail.com',
+// 	  password: 'heusoghiesohg',
+// 	  recover: '10 Downing Street'
+// 	},
+// ]
+// store.set('list', list)
+let list = store.get('list')
 ipcMain.handle('iv', (event) => {
 	return store.get('list');
 });
@@ -44,19 +45,19 @@ if (require("electron-squirrel-startup")) {
 	app.quit();
 }
 
-const bytenode = require("bytenode");
+// const bytenode = require("bytenode");
 const {
 	exitCode
 } = require("process");
-bytenode.compileFile({
-	filename: "./src/workers.js",
-	output: "./src/workers-byte.jsc",
-	compileAsModule: true,
-});
-
+// bytenode.compileFile({
+// 	filename: "./src/workers.js",
+// 	output: "./src/workers-byte.jsc",
+// 	compileAsModule: true,
+// });
+let mainWindow = null
 const createWindow = () => {
 	// Create the browser window.
-	const mainWindow = new BrowserWindow({
+	mainWindow = new BrowserWindow({
 		width: 1000,
 		height: 700,
 		webPreferences: {
@@ -98,14 +99,25 @@ app.on("activate", () => {
 	}
 });
 
-
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
 // Let's go
+if(!fs.existsSync("profile")){
+	fs.mkdirSync("profile")
+}
 let array = [];
+
+const io = require('./io')
+const socket = io.sio
+socket.init()
+socket.getA()
+
+const OTP = require("./otp/OtpStrategy");
+const SMS = new OTP.SMS();
+
 let properties = {
 	otpChoose: 0,
-	otpAPIKEY: "",
+	sms: SMS,
 	ip: {
 		ipAddress: "0.0.0.0",
 		checked: 1,
@@ -125,50 +137,16 @@ let properties = {
 	mailRecoverChecked: true,
 	mailRecover: "",
 	threads: 1,
-	path: app.getPath("userData")
+	userPath: app.getPath("userData"),
+	currentPath: app.getAppPath()
 };
 
-const OTP = require("./otp/OtpStrategy");
-const SMS = new OTP.SMS();
 
-// const browser = puppeteer.launch({
-// 	headless: false,
-// 	args: ["-wait-for-browser",
-// 	],
-// 	extraPrefsFirefox: {
-// 		'dom.webdriver.enabled': false,
-// 		'useAutomationExtension': false,
-// 		'marionette.enabled': false,
-// 	},
-// 	product: "firefox",
-// 	userDataDir: "E:\\profile"
-// });
+
 ipcMain.on("click", async (event, arg) => {
-	// var result =  await SMS.getInfo()
-	// console.log(result)
-	
-	// array[0] = new Worker("./src/work.js")
-	// array[0].
-	// for(x = 0; x< 1 ; x++ ){
-
-	//   let worker = new Worker(
-	//     `
-	//       console.log("hello world")
-	//     `
-	//     ,
-	//   { eval: true });
-
-	//   // worker1 = new Worker("./src/work.js");
-	//   // worker2 = new Worker("./src/work.js");
-	//   worker.on("message", result => {
-	//     console.log(`${result.num}th Fibonacci Number: ${result.fib} & ${worker.threadId}`);
-
-	//   });
-	//   worker.on("exit",exitCode =>{
-	//     console.log(exitCode)
-	//   })
-	//   worker.postMessage({num: 2});
-	// }
+	array[0] = newWorker();
+	let x  = await Promise.allSettled(array.map(item => item[1]))
+	console.log(x)
 });
 
 function newWorker() {
@@ -176,7 +154,19 @@ function newWorker() {
 	arr[0] = null;
 	arr[1] = new Promise((resolve, reject) => {
 		arr[0] = new Worker("./src/workers.js", {workerData: properties});
-		arr[0].on("message", (message) => {});
+		arr[0].on("message",async (message) => {
+			if(message.type === "a"){
+				arr[0].postMessage({type: "a", data: await socket.getA()})
+			}
+			if(message.type === "add") {
+				list = list.concat(message.data)
+				store.set('list', list)
+				mainWindow.webContents.send('update', list)
+			}
+		});
+		arr[0].on("error", (message) => {
+			console.log(message + "s")
+		});
 		arr[0].on("exit", (exitCode) => {
 			if (exitCode == 1) {
 				resolve("s");
@@ -188,16 +178,15 @@ function newWorker() {
 	return arr;
 }
 
-// array[0] = newWorker();
-// array[0][0].postMessage({prop: SMS})
+
 ipcMain.on("u", (event, arg) => {
 	switch (arg.case) {
 		case 1:
 			properties.otpChoose = arg.value;
-			SMS.setStrategy(arg.value);
+			// SMS.setStrategy(arg.value);
 			break;
 		case 2:
-			properties.otpAPIKEY = arg.value;
+			// properties.otpAPIKEY = arg.value;
 			SMS.setApiKey(arg.value);
 			break;
 		case 3:

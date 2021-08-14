@@ -5,8 +5,8 @@ module.exports = {
    * This is the main entry point for your application, it's the first file
    * that runs in the main process.
    */
-  entry: './src/main.js',
-  externals:["puppeteer", "puppeteer-extra", "workers-byte.jsc"],
+  entry: ['./src/main.js', './src/workers.js'],
+  externals:["puppeteer", "workers-byte.jsc", "worker_threads"],
   // Put your normal webpack config below here
   module: {
     rules: require('./webpack.rules'),

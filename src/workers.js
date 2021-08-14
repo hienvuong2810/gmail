@@ -3,6 +3,7 @@ const {
 	parentPort,
 	workerData
 } = require("worker_threads");
+const fs = require("fs");
 const puppeteer = require("puppeteer");
 const OTP = require("./otp/OtpStrategy");
 const name = [
@@ -29,21 +30,59 @@ const ho = [
 	"Susan",
 	"Mary",
 ];
-//const puppeteer = require("puppeteer")
+
+const events = require('events');
+const eventEmitter = new events.EventEmitter();
+
+const { v4: uuidv4 } = require('uuid');
 let shareData = null;
+let xPath = {}
 parentPort.on("message", async (data) => {
-	if (!data.case) {
-		console.log(data.prop);
-		Object.setPrototypeOf(data.prop, OTP.SMS.prototype);
-		shareData = data.prop;
-		shareData.setStrategy(1);
-		var result = await shareData.getInfo();
-		console.log(result);
-	} else if (data.case === "show") {
-		console.log(shareData);
+	if(data.type){
+		xPath = data.data
+		eventEmitter.emit('ok')
 	}
 });
 
+// if(!fs.existsSync(workerData.currentPath + "\\profile")){
+// 	// throww Error
+// }
+// let uuid = uuidv4()
+// let profile = workerData.currentPath + "\\profile\\" + uuid 
+// try {
+// 	if(!fs.existsSync(profile)){
+// 		fs.mkdirSync(profile)
+// 		fs.writeFileSync(profile + "\\" + "pref.js")
+// 		process.exit(1)
+// 	}
+// }catch(e){
+// 	console.log("Err 2021")
+// 	process.exit(0)
+// }
+
+// console.log(workerData.sms);
+// Object.setPrototypeOf(workerData.sms, OTP.SMS.prototype);
+// shareData = workerData.sms;
+// shareData.setStrategy(workerData.otpChoose);
+// console.log(shareData)
+
+
+// async function a(){
+// 	await waitToChange('a')
+// 	console.log('preXpath')
+// 	console.log(xPath)
+// 	console.log('afterXpath')
+// }
+// a()
+
+
+parentPort.postMessage({type: "add", data: {
+	key: generateString() + '@gmail.com',
+	gmail: 'hienvuong2810@gmail.com',
+	password: 'heusoghiesohg',
+	recover: 'hienvuong2810@gmail.com'
+  }} 
+)
 async function runEmulator() {
 	let nameSelect = name[Math.floor(Math.random() * 10)];
 	let hoSelect = ho[Math.floor(Math.random() * 10)];
@@ -188,7 +227,7 @@ async function runEmulator() {
 
 	await page.click("#termsofserviceNext")
 }
-runEmulator();
+//runEmulator();
 
 function generateString() {
 	let chars = "abcdefghijklmnopqrstuvwxyz";
@@ -201,4 +240,14 @@ function generateString() {
 
 function generateNumber() {
 	return Math.floor(Math.random() * (9999 - 1000 + 1) + 1000);
+}
+
+
+function waitToChange(type){
+	parentPort.postMessage({type: type})
+	return new Promise((resolve, reject) => {
+		eventEmitter.on('ok', () => {
+			resolve()
+		})
+	})
 }

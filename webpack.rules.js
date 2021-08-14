@@ -14,6 +14,10 @@ module.exports = [
       }
     }
   },
+  {
+      test: /workers\.js$/,
+      use: { loader: "worker-loader" },
+  }
   // {
   //   test: /\.(m?js|node)$/,
   //   parser: { amd: false },
