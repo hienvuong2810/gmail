@@ -192,6 +192,14 @@ async function runEmulator() {
 	await page.keyboard.press('Backspace');
 	await page.waitForTimeout(2000);
 	//mail recover
+	await page.click('input[name="recoveryEmail"]')
+	await page.type('input[name="recoveryEmail"]', 'hienvuong2810@gmail.com')
+
+	console.log("fill gender")
+	await page.click("#gender");
+	await page.select("#gender", Math.floor(Math.random() * (2 - 1 + 1) + 1).toString());
+	await page.waitForTimeout(2000);
+
 	console.log("fill day")
 	await page.click("#day");
 	await page.type("#day", Math.floor(Math.random() * (25 - 1 + 1) + 1).toString());
@@ -207,25 +215,26 @@ async function runEmulator() {
 	await page.type("#year", Math.floor(Math.random() * (1990 - 2005 + 1) + 2005).toString());
 	await page.waitForTimeout(2000);
 
-	console.log("fill gender")
-	await page.click("#gender");
-	await page.select("#gender", Math.floor(Math.random() * (2 - 1 + 1) + 1).toString());
-	await page.waitForTimeout(2000);
+
+	console.log("click next");
 
 	(await page.$x('/html/body/div[1]/div[1]/div[2]/div[1]/div[2]/div/div/div[2]/div/div[2]/div/div[1]/div/div/button'))[0].click();
-
-	await page.waitForSelector("#termsofserviceNext", {
+	await page.waitForTimeout(2000);
+	await page.waitForXPath('//*[@id="view_container"]/div/div/div[2]/div/div[2]/div/div[1]/div/div/button', {
 		visible: true,
 	})
 
-	let space = 100
-	for (let i = 0; i< 10; i++){
-		window.scroll(0,space)
-		space+=200
-		await page.waitForTimeout(1000);
-	}
-
-	await page.click("#termsofserviceNext")
+	await page.evaluate(async () => {
+		let space = 100		
+		for(let i = 0; i< 10; i++){	
+			window.scroll(0,space)
+			space+=200
+			console.log('scoll')
+			await new Promise(resolve => { setTimeout(resolve, 500); });
+		}
+	})
+	console.log('finish')
+	(await page.$x('//*[@id="view_container"]/div/div/div[2]/div/div[2]/div/div[1]/div/div/button'))[0].click()
 }
 //runEmulator();
 
