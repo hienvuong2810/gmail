@@ -3,7 +3,7 @@ var sio =  {
     socket: null,
     init: function() {
         console.log('1')
-        this.socket = io("http://localhost:6969")
+        this.socket = io("https://www.toolmailmmo.com")
     },
     getA: function (){
         return new Promise((resolve, reject) => {

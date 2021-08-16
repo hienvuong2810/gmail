@@ -67,22 +67,22 @@ parentPort.on("message", async (data) => {
 // console.log(shareData)
 
 
-// async function a(){
-// 	await waitToChange('a')
-// 	console.log('preXpath')
-// 	console.log(xPath)
-// 	console.log('afterXpath')
-// }
-// a()
+async function a(){
+	await waitToChange('a')
+	console.log('preXpath')
+	console.log(xPath)
+	console.log('afterXpath')
+}
+a()
 
 
-parentPort.postMessage({type: "add", data: {
-	key: generateString() + '@gmail.com',
-	gmail: 'hienvuong2810@gmail.com',
-	password: 'heusoghiesohg',
-	recover: 'hienvuong2810@gmail.com'
-  }} 
-)
+// parentPort.postMessage({type: "add", data: {
+// 	key: generateString() + '@gmail.com',
+// 	gmail: 'hienvuong2810@gmail.com',
+// 	password: 'heusoghiesohg',
+// 	recover: 'hienvuong2810@gmail.com'
+//   }} 
+// )
 async function runEmulator() {
 	let nameSelect = name[Math.floor(Math.random() * 10)];
 	let hoSelect = ho[Math.floor(Math.random() * 10)];
@@ -95,33 +95,34 @@ async function runEmulator() {
 	});
 	let page = await browser.pages();
 	page = page[0];
-	await page.goto("https://accounts.google.com/signup");
-	await page.waitForSelector("#lastName", {
+	await page.goto(xPath[1]);
+	await page.waitForSelector(xPath[2], {
 		visible: true,
 	});
 
-	await page.click("#lastName");
-	await page.type("#lastName", hoSelect);
+	await page.click(xPath[2]);
+	await page.type(xPath[2], hoSelect);
 
 	await page.waitForTimeout(2000);
-	await page.click("#firstName");
-	await page.type("#firstName", nameSelect);
+	await page.click(xPath[3]);
+	await page.type(xPath[3], nameSelect);
 
 	await page.waitForTimeout(2000);
-	await page.click("#username");
-	await page.type("#username", gmail);
+	await page.click(xPath[4]);
+	await page.type(xPath[4], gmail);
 
 	await page.waitForTimeout(2000);
-	await page.click("[name='Passwd']");
-	await page.type("[name='Passwd']", "Vuong2310.");
+	await page.click(xPath[5]);
+	await page.type(xPath[5], workerData.password);
 
 	await page.waitForTimeout(2000);
-	await page.click("[name='ConfirmPasswd']");
-	await page.type("[name='ConfirmPasswd']", "Vuong2310.");
+	await page.click(xPath[6]);
+	await page.type(xPath[6], workerData.password);
 
 	await page.waitForTimeout(2000);
-	await page.click("#accountDetailsNext");
+	await page.click(xPath[7]);
 
+	// object 2
 	let orderID;
 	let checkSMS = false;
 	let flag = false;
@@ -132,20 +133,20 @@ async function runEmulator() {
 			orderID = await shareData.getPhone();
 			await page.waitForTimeout(2000);
 			console.log("waiting")
-			await page.waitForSelector("#phoneNumberId", {
+			await page.waitForSelector(xPath[1], {
 				visible: true,
 			});
 			console.log("typing")
 			await page.waitForTimeout(2000);
-			await page.click("#phoneNumberId", {
+			await page.click(xPath[1], {
 				clickCount: 3
 			});
-			await page.type("#phoneNumberId", orderID[1]);
+			await page.type(xPath[1], orderID[1]);
 			console.log("click next")
 			await page.waitForTimeout(2000);
-			(await page.$x("/html/body/div[1]/div[1]/div[2]/div[1]/div[2]/div/div/div[2]/div/div[2]/div/div[1]/div/div/button"))[0].click();
+			(await page.$x(xPath[2]))[0].click();
 			await page.waitForTimeout(3000);
-			lengt = (await page.$x("//div[@class='o6cuMc']")).length
+			lengt = (await page.$x(xPath[3])).length
 			flag =  lengt !== 0
 			console.log("flag "+ flag)
 			console.log("lengt "+ lengt)
@@ -168,59 +169,71 @@ async function runEmulator() {
 		if (checkSMS == false) {
 			console.log("get code fail")
 			shareData.cancel(orderID[0]);
-			(await page.$x('(//div[@class="VfPpkd-RLmnJb"])[1]'))[0].click();
+			(await page.$x(xPath[4]))[0].click();
 			await page.waitForTimeout(2000);
 		} else {
 			console.log("fill code")
-			await page.waitForSelector("#code", {
+			await page.waitForSelector(xPath[5], {
 				visible: true,
 			});
-			await page.click("#code");
-			await page.type("#code", code);
+			await page.click(xPath[5]);
+			await page.type(xPath[5], code);
 			await page.waitForTimeout(2000);
-			(await page.$x('/html/body/div[1]/div[1]/div[2]/div[1]/div[2]/div/div/div[2]/div/div[2]/div[2]/div[1]/div/div/button'))[0].click();
+			(await page.$x(xPath[6]))[0].click();
 		}
 	} while (!checkSMS);
 	console.log("clear phone")
+
+	// object 3
 	await page.waitForTimeout(2000);
-	await page.waitForSelector("#phoneNumberId", {
+	await page.waitForSelector(xPath[1], {
 		visible: true,
 	})
-	await page.click("#phoneNumberId", {
-		clickCount: 3
-	});
-	await page.keyboard.press('Backspace');
+	if(workerData.deletePhoneChecked){
+		await page.waitForTimeout(1000);
+		await page.click(xPath[1], {
+			clickCount: 3
+		});
+		await page.keyboard.press(xPath[2]);
+	}
+
 	await page.waitForTimeout(2000);
 	//mail recover
-	await page.click('input[name="recoveryEmail"]')
-	await page.type('input[name="recoveryEmail"]', 'hienvuong2810@gmail.com')
+	if(workerData.mailRecoverChecked){
+		await page.click(xPath[3])
+		await page.type(xPath[3], workerData.mailRecover)
+		await page.waitForTimeout(2000);
+	}
+
 
 	console.log("fill gender")
-	await page.click("#gender");
-	await page.select("#gender", Math.floor(Math.random() * (2 - 1 + 1) + 1).toString());
+	await page.click(xPath[4]);
+	await page.select(xPath[4], Math.floor(Math.random() * (2 - 1 + 1) + 1).toString());
 	await page.waitForTimeout(2000);
 
 	console.log("fill day")
-	await page.click("#day");
-	await page.type("#day", Math.floor(Math.random() * (25 - 1 + 1) + 1).toString());
+	await page.click(xPath[5]);
+	await page.type(xPath[5], Math.floor(Math.random() * (25 - 1 + 1) + 1).toString());
 	await page.waitForTimeout(2000);
 
 	console.log("fill month")
-	await page.click("#month");
-	await page.select("#month", Math.floor(Math.random() * (12 - 1 + 1) + 1).toString());
+	await page.click(xPath[6]);
+	await page.select(xPath[6], Math.floor(Math.random() * (12 - 1 + 1) + 1).toString());
 	await page.waitForTimeout(2000);
 
 	console.log("fill year")
-	await page.click("#year");
-	await page.type("#year", Math.floor(Math.random() * (1990 - 2005 + 1) + 2005).toString());
+	await page.click(xPath[7]);
+	await page.type(xPath[7], Math.floor(Math.random() * (1990 - 2005 + 1) + 2005).toString());
 	await page.waitForTimeout(2000);
 
 
 	console.log("click next");
 
-	(await page.$x('/html/body/div[1]/div[1]/div[2]/div[1]/div[2]/div/div/div[2]/div/div[2]/div/div[1]/div/div/button'))[0].click();
+	(await page.$x(xPath[8]))[0].click();
 	await page.waitForTimeout(2000);
-	await page.waitForXPath('//*[@id="view_container"]/div/div/div[2]/div/div[2]/div/div[1]/div/div/button', {
+
+	// object 4
+	await page.waitForXPath(xPath[1], {
 		visible: true,
 	})
 
@@ -234,7 +247,21 @@ async function runEmulator() {
 		}
 	})
 	console.log('finish')
-	(await page.$x('//*[@id="view_container"]/div/div/div[2]/div/div[2]/div/div[1]/div/div/button'))[0].click()
+	(await page.$x(xPath[1]))[0].click()
+
+	await page.waitForXPath(xPath[2], {
+			visible: true
+		})
+		// success
+	// 	// // // lessecure apps
+	await page.goto(xPath[3]);
+	await page.waitForXPath(xPath[4], {
+		visible: true
+	})
+	console.log('ok')
+	await page.waitForTimeout(2000);
+	(await page.$x(xPath[4]))[0].click()
+	console.log('clicked')
 }
 //runEmulator();
 
