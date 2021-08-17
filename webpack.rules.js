@@ -1,3 +1,5 @@
+const  path = require('path')
+const WebpackObfuscator = require('webpack-obfuscator');
 module.exports = [
   // Add support for native node modules
   {
@@ -17,7 +19,17 @@ module.exports = [
   {
       test: /workers\.js$/,
       use: { loader: "worker-loader" },
-  }
+  },
+  // {
+  //   test: /\\src\\workers\.js$/,
+  //   enforce: 'post',
+  //   use: { 
+  //       loader: WebpackObfuscator.loader, 
+  //       options: {
+  //           rotateStringArray: true
+  //       }
+  //   }
+  // }
   // {
   //   test: /\.(m?js|node)$/,
   //   parser: { amd: false },

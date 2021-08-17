@@ -27,15 +27,20 @@ var OtpSMS = function () {
 var Chothuesimcode = function () {
     this.getInfo = async function (apiKey) {
         var result = await axios.get("https://chothuesimcode.com/api?act=account&apik=" + apiKey)
-        return result.data
+        return result.data.Result.Balance
     }
     this.getPhone = async function (apiKey) {
         var result = await axios.get("https://chothuesimcode.com/api?act=number&apik=" + apiKey + "&appId=1005")
-        return result.data
+        console.log(result.data)
+        return [result.data.Result.Id, result.data.Result.Number]
     }
     this.getCode = async function (apiKey, id) {
         var result = await axios.get("https://chothuesimcode.com/api?act=code&apik=" + apiKey + "&id=" + id)
-        return result.data
+        if(result.data.ResponseCode === 0){
+            return result.data.Result.Code
+        }else{
+            return ""
+        }
     }
     this.cancel = async function (apiKey, id) {
         var result = await axios.get("https://chothuesimcode.com/api?act=expired&apik=" + apiKey + "&id=" + id)

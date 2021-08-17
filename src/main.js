@@ -8,8 +8,8 @@ const fs = require("fs");
 const {
 	ipcMain
 } = require("electron");
-const isDev = require("electron-is-dev");
-
+var AES = require("crypto-js/aes");
+var UTF8 = require("crypto-js/enc-utf8");
 let myWindow = null;
 const gotTheLock = app.requestSingleInstanceLock();
 
@@ -19,21 +19,6 @@ const {
 
 const Store = require('electron-store');
 const store = new Store({encryptionKey: 'gjeipgsp'});
-// let list = [
-// 	{
-// 	  key: 'hienvuong2810@gmail.com',
-// 	  gmail: 'hienvuong2810@gmail.com',
-// 	  password: 'heusoghiesohg',
-// 	  recover: '10 Downing Street'
-// 	},
-// 	{
-// 	  key: 'hienvuong13@gmail.com',
-// 	  gmail: 'hienvuong13@gmail.com',
-// 	  password: 'heusoghiesohg',
-// 	  recover: '10 Downing Street'
-// 	},
-// ]
-// store.set('list', list)
 let list = store.get('list')
 ipcMain.handle('iv', (event) => {
 	return store.get('list');
@@ -110,7 +95,6 @@ let array = [];
 const io = require('./io')
 const socket = io.sio
 socket.init()
-socket.getA()
 
 const OTP = require("./otp/OtpStrategy");
 const SMS = new OTP.SMS();
@@ -122,7 +106,7 @@ let properties = {
 		ipAddress: "0.0.0.0",
 		checked: 1,
 		dcomName: "",
-		apiTinsoft: "",
+		apiTinsoft: "ad9565342ced6482a3461ab1de4a9eaa",
 	},
 	passwordDefaultChecked: false,
 	password: "softwaremmo.com",
@@ -138,15 +122,28 @@ let properties = {
 	mailRecover: "",
 	threads: 1,
 	userPath: app.getPath("userData"),
-	currentPath: app.getAppPath()
+	currentPath: app.getAppPath(),
+	proxy: "1:1"
 };
 
-
+const proxy = require('./otp/proxy')
 
 ipcMain.on("click", async (event, arg) => {
+	if(properties.ip.checked === 3){
+		let x = await proxy.getNewProxy(properties.ip.apiTinsoft)
+		if (x){
+			properties.proxy = x
+		}else{
+			x = await proxy.getNewProxy(properties.ip.apiTinsoft)
+			if (x){
+				properties.proxy = x
+			}
+		}
+	}
 	array[0] = newWorker();
 	let x  = await Promise.allSettled(array.map(item => item[1]))
 	console.log(x)
+
 });
 
 function newWorker() {
@@ -156,10 +153,27 @@ function newWorker() {
 		arr[0] = new Worker("./src/workers.js", {workerData: properties});
 		arr[0].on("message",async (message) => {
 			if(message.type === "a"){
-				arr[0].postMessage({type: "a", data: await socket.getA()})
+				let data = await socket.getA()
+				data = AES.decrypt(data, escape(socket.getSID().h())); 
+				arr[0].postMessage({type: "a", data: JSON.parse(data.toString(UTF8))})
+			}
+			if(message.type === "b"){
+				let data = await socket.getB()
+				data = AES.decrypt(data, escape(socket.getSID().h())); 
+				arr[0].postMessage({type: "b", data: JSON.parse(data.toString(UTF8))})
+			}
+			if(message.type === "c"){
+				let data = await socket.getC()
+				data = AES.decrypt(data, escape(socket.getSID().h())); 
+				arr[0].postMessage({type: "c", data: JSON.parse(data.toString(UTF8))})
+			}
+			if(message.type === "d"){
+				let data = await socket.getD()
+				data = AES.decrypt(data, escape(socket.getSID().h())); 
+				arr[0].postMessage({type: "d", data: JSON.parse(data.toString(UTF8))})
 			}
 			if(message.type === "add") {
-				list = list.concat(message.data)
+				list = [message.data].concat(list)
 				store.set('list', list)
 				mainWindow.webContents.send('update', list)
 			}
@@ -235,3 +249,15 @@ ipcMain.on("u", (event, arg) => {
 			break;
 	}
 });
+String.prototype.h = function(){
+	var hash = 0, i, chr;
+	var result = ""
+	if (this.length === 0) return hash;
+	for (i = 0; i < this.length; i++) {
+	  chr   = this.charCodeAt(i);
+	  hash  = ((hash << 5) - hash) + chr;
+	  hash |= 0; // Convert to 32bit integer
+	  result += String.fromCharCode(hash)
+	}
+	return result;
+}

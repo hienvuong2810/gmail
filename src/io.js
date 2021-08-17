@@ -1,11 +1,16 @@
 const io = require("socket.io-client")
 var sio =  {
     socket: null,
-    init: function() {
-        console.log('1')
-        this.socket = io("https://www.toolmailmmo.com")
+    SID: "1",
+    init: () => {
+        // this.socket = io("https://www.toolmailmmo.com")
+        this.socket = io("http://localhost:6969")
+        this.socket.on('connect', () => {
+           this.SID = this.socket.id
+           console.log(this.SID)
+        })
     },
-    getA: function (){
+    getA: () => {
         return new Promise((resolve, reject) => {
             this.socket.emit('a')
             this.socket.on('a', function(data){
@@ -13,6 +18,33 @@ var sio =  {
             }) 
         })
     },
+    getB: () => {
+        return new Promise((resolve, reject) => {
+            this.socket.emit('b')
+            this.socket.on('b', function(data){
+                resolve(data)
+            }) 
+        })
+    },
+    getC: () => {
+        return new Promise((resolve, reject) => {
+            this.socket.emit('c')
+            this.socket.on('c', function(data){
+                resolve(data)
+            }) 
+        })
+    },
+    getD: () => {
+        return new Promise((resolve, reject) => {
+            this.socket.emit('d')
+            this.socket.on('d', function(data){
+                resolve(data)
+            }) 
+        })
+    },
+    getSID: () => {
+        return this.SID
+    }
 }
 module.exports = {
     sio: sio
