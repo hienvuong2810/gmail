@@ -4,7 +4,12 @@ import "./css.css";
 const { Column, ColumnGroup } = Table;
 import { connect } from "react-redux";
 const { TabPane } = Tabs;
-	
+const { ipcRenderer } = require("electron");
+import {Noti} from "./actions/dashboardTabAction"
+ipcRenderer.on('err', (event, data) => {
+	console.log(data)
+	Noti(data)
+});
 const columns = [
 	{
 		title: "Gmail",

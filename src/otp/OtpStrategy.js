@@ -7,7 +7,12 @@ var OtpSMS = function () {
     }
     this.getPhone = async function (apiKey) {
         var result = await axios.get("http://otpsim.com/api/phones/request?token=" + apiKey + "&service=3")
-        return [result.data.data.session, result.data.data.phone_number]
+        if(result.data.status_code === 200){
+            return [result.data.data.session, result.data.data.phone_number]
+        }else{
+            return result.data.message
+        }
+        
     }
     this.getCode = async function (apiKey, id) {
         var result = await axios.get("http://otpsim.com/api/sessions/" + id + "?token=" + apiKey)
@@ -31,8 +36,12 @@ var Chothuesimcode = function () {
     }
     this.getPhone = async function (apiKey) {
         var result = await axios.get("https://chothuesimcode.com/api?act=number&apik=" + apiKey + "&appId=1005")
-        console.log(result.data)
-        return [result.data.Result.Id, result.data.Result.Number]
+        if(result.data.ResponseCode === 0){
+            return [result.data.Result.Id, result.data.Result.Number]
+        }else{
+            return result.data.Msg
+        }
+        
     }
     this.getCode = async function (apiKey, id) {
         var result = await axios.get("https://chothuesimcode.com/api?act=code&apik=" + apiKey + "&id=" + id)

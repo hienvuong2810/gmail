@@ -2,6 +2,7 @@ import React from "react";
 import { PageHeader, Tabs, Button, Badge, Tag } from "antd";
 import { UserOutlined, FieldTimeOutlined } from "@ant-design/icons";
 import "./css.css";
+import { connect } from "react-redux";
 class Headers extends React.Component {
 	render() {
 		return (
@@ -13,18 +14,18 @@ class Headers extends React.Component {
 				title={
 					<>
 						<UserOutlined />
-						<span style={{ margin: "10px" }}>XS5G8F</span>
+						<span style={{ margin: "10px" }}>{this.props.data.key}</span>
 						<Badge
 							style={{ paddingBottom: "5px" }}
 							status="success"
 						/>
 					</>
 				}
-				tags={<Tag color="blue">TRIAL</Tag>}
+				tags={<Tag color="blue">{this.props.data.status}</Tag>}
 				subTitle={
 					<>
 						<FieldTimeOutlined />
-						<span style={{ marginLeft: "10px" }}>17/10/2021</span>
+						<span style={{ marginLeft: "10px" }}>{this.props.data.expried}</span>
 					</>
 				}
 				extra={[
@@ -35,5 +36,11 @@ class Headers extends React.Component {
 		);
 	}
 }
+function mapStateToProps(state) {
+	return {
+		data: state.data,
+	};
+}
 
-export default Headers;
+export default connect(mapStateToProps)(Headers);
+

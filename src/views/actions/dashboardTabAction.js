@@ -1,5 +1,5 @@
 import { ipcRenderer } from "electron"
-
+import {notification} from "antd"
 export const UPDATE_LIST = "UPDATE_LIST"
 
 
@@ -9,7 +9,7 @@ export  function initData() {
         const list = await ipcRenderer.invoke('iv')
         dispatch({
             type: UPDATE_LIST,
-            payload: list
+            payload: list[1]
         })
     }
 }
@@ -21,4 +21,12 @@ export function update(data) {
             payload: data
         })
     }
+}
+export function Noti(message) {
+    notification.error({
+        message: "LỖI",
+        description: message,
+        duration: 0
+    })
+
 }

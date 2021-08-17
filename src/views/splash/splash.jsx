@@ -2,7 +2,17 @@ import React from "react";
 import { Progress, Card, Col, Row, Typography } from "antd";
 import Image from "./image.jsx";
 import "../css.css"
+const { ipcRenderer } = require("electron");
 export default class Splash extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+		  percent: 0
+		}
+	  }
+	async componentDidMount(){
+		ipcRenderer.invoke('init')
+	}
 	render() {
 		return (
 			<div>
@@ -79,7 +89,7 @@ export default class Splash extends React.Component {
 				</Row>
 				<Row style={{ padding: "0 90px" }}>
 					Đang bật tool
-					<Progress percent={30} />
+					<Progress percent={this.percent} />
 				</Row>
 			</div>
 		);

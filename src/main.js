@@ -12,18 +12,32 @@ var AES = require("crypto-js/aes");
 var UTF8 = require("crypto-js/enc-utf8");
 let myWindow = null;
 const gotTheLock = app.requestSingleInstanceLock();
+const io = require('./io')
+const socket = io.sio
 
 const {
 	Worker
 } = require("worker_threads");
+const os	 = require('systeminformation');
 
 const Store = require('electron-store');
 const store = new Store({encryptionKey: 'gjeipgsp'});
 let list = store.get('list')
 ipcMain.handle('iv', (event) => {
-	return store.get('list');
+	return [store.get('key'), store.get('list')];
 });
-
+ipcMain.handle('init',async (event) => {
+	let key = store.get('key')
+	if(!key){
+		let data = await Promise.all([os.system(), os.diskLayout(), socket.init()])
+		key = await socket.key(AES.encrypt(JSON.stringify(data), socket.getSID() + "key").toString())
+		store.set('key', key)
+		return true
+	}else{
+		socket.init()
+		return true
+	}
+});
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
 	// eslint-disable-line global-require
@@ -92,10 +106,6 @@ if(!fs.existsSync("profile")){
 }
 let array = [];
 
-const io = require('./io')
-const socket = io.sio
-socket.init()
-
 const OTP = require("./otp/OtpStrategy");
 const SMS = new OTP.SMS();
 
@@ -129,17 +139,18 @@ let properties = {
 const proxy = require('./otp/proxy')
 
 ipcMain.on("click", async (event, arg) => {
-	if(properties.ip.checked === 3){
-		let x = await proxy.getNewProxy(properties.ip.apiTinsoft)
-		if (x){
-			properties.proxy = x
-		}else{
-			x = await proxy.getNewProxy(properties.ip.apiTinsoft)
-			if (x){
-				properties.proxy = x
-			}
-		}
-	}
+	// if(properties.ip.checked === 3){
+	// 	let x = await proxy.getNewProxy(properties.ip.apiTinsoft)
+	// 	if (x){
+	// 		properties.proxy = x
+	// 	}else{
+	// 		x = await proxy.getNewProxy(properties.ip.apiTinsoft)
+	// 		if (x){
+	// 			properties.proxy = x
+	// 		}
+	// 	}
+	// }
+	console.log(1)
 	array[0] = newWorker();
 	let x  = await Promise.allSettled(array.map(item => item[1]))
 	console.log(x)
@@ -179,7 +190,8 @@ function newWorker() {
 			}
 		});
 		arr[0].on("error", (message) => {
-			console.log(message + "s")
+			mainWindow.webContents.send('err', message.message)
+			arr[0].terminate()
 		});
 		arr[0].on("exit", (exitCode) => {
 			if (exitCode == 1) {

@@ -8,7 +8,7 @@ import "antd/dist/antd.css";
 import { Provider } from "react-redux";
 import store from "./views/store";
 import logger from "redux-logger";
-import {initData, update} from "./views/actions/dashboardTabAction.js"
+import {initData, update, Noti} from "./views/actions/dashboardTabAction.js"
 import Headers from "./views/headers.jsx";
 import Dashboard from "./views/tabDashboard.jsx";
 import CreateGmail from "./views/tabCreateGmail.jsx";
@@ -17,13 +17,14 @@ import Contact from "./views/tabContact.jsx";
 import Footers from "./views/footer.jsx";
 const { Header, Footer, Content } = Layout;
 const { TabPane } = Tabs;
-import Splash from "./views/splash/splash.jsx"
+import Splash from "./views/splash/splash.jsx";
+
+ipcRenderer.on('update', (event, data) => {
+	store.dispatch(update(data))
+});
 
 const init = async () => {
 	await store.dispatch(initData())
-	ipcRenderer.on('update', (event, data) => {
-		store.dispatch(update(data))
-	})
 	if(false){
 		ReactDOM.render(<Splash/>,document.getElementById("root") );
 	}

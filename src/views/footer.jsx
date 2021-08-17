@@ -7,8 +7,8 @@ const { Text, Title } = Typography;
 
 class Footer extends React.Component {
 	onClickStart() {
-		this.props.dispatch({ type: "START" });
 		ipcRenderer.send("click");
+		this.props.dispatch({ type: "START" });
 	}
 	onClickPause() {
 		this.props.dispatch({ type: "STOP" });

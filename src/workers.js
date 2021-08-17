@@ -33,7 +33,6 @@ const ho = [
 const events = require('events');
 const eventEmitter = new events.EventEmitter();
 let shareData = null;
-
 Object.setPrototypeOf(workerData.sms, OTP.SMS.prototype);
 shareData = workerData.sms;
 shareData.setStrategy(workerData.otpChoose);
@@ -134,6 +133,9 @@ async function runEmulator() {
 	do {
 		do {
 			orderID = await shareData.getPhone();
+			if(typeof orderID === "string"){
+				throw Error(orderID)
+			}
 			await page.waitForTimeout(2000);
 			await page.waitForSelector(xPath[1], {
 				visible: true,

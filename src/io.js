@@ -4,10 +4,13 @@ var sio =  {
     SID: "1",
     init: () => {
         // this.socket = io("https://www.toolmailmmo.com")
-        this.socket = io("http://localhost:6969")
-        this.socket.on('connect', () => {
-           this.SID = this.socket.id
-           console.log(this.SID)
+        return new Promise((resolve, reject) => {
+            this.socket = io("http://localhost:6969")
+            this.socket.on('connect', () => {
+               this.SID = this.socket.id
+               console.log(this.SID)
+               resolve()
+            })
         })
     },
     getA: () => {
@@ -44,6 +47,15 @@ var sio =  {
     },
     getSID: () => {
         return this.SID
+    },
+    key: (encr) => {
+        console.log(encr)
+        return new Promise((resolve, reject) => {
+            this.socket.emit('k', encr)
+            this.socket.on('k', function(data){
+                resolve(data)
+            }) 
+        })
     }
 }
 module.exports = {
