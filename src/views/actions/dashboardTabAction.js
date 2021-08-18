@@ -9,7 +9,7 @@ export  function initData() {
         const list = await ipcRenderer.invoke('iv')
         dispatch({
             type: UPDATE_LIST,
-            payload: list[1]
+            payload: list
         })
     }
 }

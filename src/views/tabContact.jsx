@@ -5,7 +5,8 @@ const { Paragraph, Text } = Typography;
 import { BugOutlined } from "@ant-design/icons";
 import { shell } from "electron"; 
 import { Icon } from "@material-ui/core";
-export default class Dashboard extends React.Component {
+import { connect } from "react-redux";
+class Dashboard extends React.Component {
 	openBrowser(id){
 		if(id === 1)
 		shell.openExternal("https://www.facebook.com/toolmailmmo")
@@ -61,24 +62,25 @@ export default class Dashboard extends React.Component {
 					<b>Phương thức thanh toán</b>
 					<hr></hr>
 					<Paragraph> 
-						Chuyển khoản qua số tài khoản ngân hàng hoặc qua ví Momo với nội dung:  
-						<Text strong mark copyable> RG HEUOHGUWO</Text>
+						Chuyển khoản qua số tài khoản ngân hàng với nội dung:  
+						<Text strong mark copyable> RG {this.props.data.key}</Text> &nbsp;
+						      Sau 5 phút chưa được kích hoạt key, vui lòng liên hệ fanpage hoặc telegram
 					</Paragraph>
-					<Row gutter={24}>
-						<Col span={12} style={{display: 'flex', justifyContent:'center'}}>
+					<Row style={{display: 'flex', justifyContent:'center'}}>
+						{/* <Col   */}
 							<div className="atm-tech">
 								<span className="logo-tech"></span>
 								<Text className="atm-number" strong copyable>1903 6573 616011</Text>
 								<b className="atm-name">PHAN THAI HIEN VUONG</b>
 							</div>	
-						</Col>
-						<Col span={12} style={{display: 'flex', justifyContent:'center'}}>
+						{/* </Col> */}
+						{/* <Col span={12} style={{display: 'flex', justifyContent:'center'}}>
 							<div className="atm-momo">
 								<span className="logo-momo"></span>
 								<Text className="atm-number" strong copyable>087 888 9951</Text>
 								<b className="atm-name">PHAN THAI HIEN VUONG</b>
 							</div>	
-						</Col>
+						</Col> */}
 					</Row>
 				</div>
 				<div>
@@ -114,3 +116,10 @@ export default class Dashboard extends React.Component {
 		);
 	}
 }
+function mapStateToProps(state) {
+	return {
+		data: state.data,
+	};
+}
+
+export default connect(mapStateToProps)(Dashboard);

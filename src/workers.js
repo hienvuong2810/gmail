@@ -66,7 +66,7 @@ try {
 	user_pref("browser.newtabpage.enabled", false);
 	user_pref("browser.startup.homepage", "about:blank");
 	user_pref("browser.tabs.warnOnClose", false);
-	user_pref("toolkit.telemetry.reportingpolicy.firstRun", false);
+	user_pref("privacy.resistFingerprinting", true);
 	` + (workerData.ip.checked === 3 ? 
 	`user_pref("network.proxy.socks", "${proxy[0]}");
 	user_pref("network.proxy.socks_port",${proxy[1]});
@@ -77,12 +77,18 @@ try {
 }
 
 console.log(proxy)
-puppeteer.launch({
-	headless: false,
-	args: ["-wait-for-browser"],
-	product: "firefox",
-	userDataDir: profile
-});
+async function a() {
+	let x = await puppeteer.launch({
+		headless: false,
+		args: ["-wait-for-browser"],
+		
+		product: "firefox",
+		userDataDir: profile
+	});
+	let page = await x.pages()
+	page = page[0];
+}
+a()
 async function runEmulator() {
 	await waitToChange('a')
 	let nameSelect = name[Math.floor(Math.random() * 10)];

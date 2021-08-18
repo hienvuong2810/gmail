@@ -1,17 +1,37 @@
 import React from "react";
-import { Progress, Card, Col, Row, Typography } from "antd";
+import { Progress, Col, Row } from "antd";
 import Image from "./image.jsx";
 import "../css.css"
+import { connect } from "react-redux";
 const { ipcRenderer } = require("electron");
-export default class Splash extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-		  percent: 0
-		}
-	  }
+
+class Splash extends React.Component {
 	async componentDidMount(){
-		ipcRenderer.invoke('init')
+		// setInterval(() => {
+		// 	this.tick()
+		// }, 50)
+		await ipcRenderer.invoke('init')
+		let data = await ipcRenderer.invoke('key')
+		this.props.dispatch({
+			type: "KEY",
+			payload: data.key
+		})
+		this.props.dispatch({
+			type: "EXPRIED",
+			payload: data.exp
+		})
+		this.props.dispatch({
+			type: "STATE",
+			payload: 1
+		})		
+	}
+	tick() {
+		if (this.props.x.percent <= 100){
+			this.props.dispatch({
+				type: "PERCENT",
+				payload: this.props.x.percent + 1
+			})
+		}
 	}
 	render() {
 		return (
@@ -89,9 +109,18 @@ export default class Splash extends React.Component {
 				</Row>
 				<Row style={{ padding: "0 90px" }}>
 					Đang bật tool
-					<Progress percent={this.percent} />
+					<Progress percent={this.props.x.percent} />
 				</Row>
 			</div>
 		);
 	}
 }
+
+const mapStateToProps = (state) => {
+	console.log(state)
+	return {
+		x: state.data,
+	};
+}
+
+export default connect(mapStateToProps)(Splash);

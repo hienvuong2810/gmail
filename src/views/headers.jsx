@@ -21,11 +21,11 @@ class Headers extends React.Component {
 						/>
 					</>
 				}
-				tags={<Tag color="blue">{this.props.data.status}</Tag>}
+				tags={<Tag color="blue"><b>{this.props.data.version}</b></Tag>}
 				subTitle={
 					<>
 						<FieldTimeOutlined />
-						<span style={{ marginLeft: "10px" }}>{this.props.data.expried}</span>
+						<span style={{ marginLeft: "10px" }}><b>{this.props.data.expired}</b></span>
 					</>
 				}
 				extra={[

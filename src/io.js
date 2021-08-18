@@ -56,6 +56,14 @@ var sio =  {
                 resolve(data)
             }) 
         })
+    },
+    getKey: () => {
+        return new Promise((resolve, reject) => {
+            this.socket.emit('gk')
+            this.socket.on('gk', function(data){
+                resolve(data)
+            }) 
+        })
     }
 }
 module.exports = {

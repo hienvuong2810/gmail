@@ -24,7 +24,7 @@ const Store = require('electron-store');
 const store = new Store({encryptionKey: 'gjeipgsp'});
 let list = store.get('list')
 ipcMain.handle('iv', (event) => {
-	return [store.get('key'), store.get('list')];
+	return store.get('list');
 });
 ipcMain.handle('init',async (event) => {
 	let key = store.get('key')
@@ -37,6 +37,10 @@ ipcMain.handle('init',async (event) => {
 		socket.init()
 		return true
 	}
+});
+ipcMain.handle('key',async (event) => {
+	let dataKey = await socket.getKey()
+	return dataKey
 });
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
@@ -139,18 +143,18 @@ let properties = {
 const proxy = require('./otp/proxy')
 
 ipcMain.on("click", async (event, arg) => {
-	// if(properties.ip.checked === 3){
-	// 	let x = await proxy.getNewProxy(properties.ip.apiTinsoft)
-	// 	if (x){
-	// 		properties.proxy = x
-	// 	}else{
-	// 		x = await proxy.getNewProxy(properties.ip.apiTinsoft)
-	// 		if (x){
-	// 			properties.proxy = x
-	// 		}
-	// 	}
-	// }
-	console.log(1)
+	if(properties.ip.checked === 3){
+		let x = await proxy.getNewProxy(properties.ip.apiTinsoft)
+		if (x){
+			properties.proxy = x
+		}else{
+			x = await proxy.getCurrentProxy(properties.ip.apiTinsoft)
+			if (x){
+				properties.proxy = x
+			}
+		}
+	}
+	console.log(properties.proxy)
 	array[0] = newWorker();
 	let x  = await Promise.allSettled(array.map(item => item[1]))
 	console.log(x)

@@ -1,11 +1,14 @@
 const KEY = "KEY"
 const EXPRIED = "EXPRIED"
 const STATUS = "STATUS"
-
+const STATE = "STATE"
+const PERCENT = "PERCENT"
 const initState = {
     key: "",
     expired: "",
-    status: "TRIAL"
+    version: "1.0.0",
+    percent: 0,
+    state: 0
 }
 
 export default function reducer(state = {...initState}, action){
@@ -25,7 +28,17 @@ export default function reducer(state = {...initState}, action){
         case STATUS:
             return {
                 ...state,
-                status: payload
+                version: payload
+            }
+        case STATE:
+            return {
+                ...state,
+                state: payload
+            }
+        case PERCENT:
+            return {
+                ...state,
+                percent: payload
             }
         default:
             return state
