@@ -11,6 +11,7 @@ class Footer extends React.Component {
 		this.props.dispatch({ type: "START" });
 	}
 	onClickPause() {
+		ipcRenderer.send("stop");
 		this.props.dispatch({ type: "STOP" });
 	}
 	onChangeThread(value) {

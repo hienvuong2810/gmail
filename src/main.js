@@ -30,6 +30,7 @@ ipcMain.handle('init',async (event) => {
 	let key = store.get('key')
 	if(!key){
 		let data = await Promise.all([os.system(), os.diskLayout(), socket.init()])
+		console.log("id" +  socket.getSID())
 		key = await socket.key(AES.encrypt(JSON.stringify(data), socket.getSID() + "key").toString())
 		store.set('key', key)
 		return true
@@ -123,7 +124,7 @@ let properties = {
 		apiTinsoft: "ad9565342ced6482a3461ab1de4a9eaa",
 	},
 	passwordDefaultChecked: false,
-	password: "softwaremmo.com",
+	password: "toolmailmmo.com",
 	notSecureChecked: true,
 	openImapPOP3Checked: true,
 	saveProfileChecked: true,
@@ -137,10 +138,11 @@ let properties = {
 	threads: 1,
 	userPath: app.getPath("userData"),
 	currentPath: app.getAppPath(),
-	proxy: "1:1"
+	proxy: ""
 };
+let ISRUNNING = true
+const proxy = require('./otp/proxy');
 
-const proxy = require('./otp/proxy')
 
 ipcMain.on("click", async (event, arg) => {
 	if(properties.ip.checked === 3){
@@ -151,16 +153,36 @@ ipcMain.on("click", async (event, arg) => {
 			x = await proxy.getCurrentProxy(properties.ip.apiTinsoft)
 			if (x){
 				properties.proxy = x
+			}else{
+				mainWindow.webContents.send('err', "Lỗi proxy")
+				return 
 			}
 		}
 	}
-	console.log(properties.proxy)
-	array[0] = newWorker();
-	let x  = await Promise.allSettled(array.map(item => item[1]))
-	console.log(x)
+	// console.log(properties.proxy)
+	ISRUNNING = true
+	while(ISRUNNING){
+		array.length = 0
+		for(let i = 0; i < properties.threads; i++){
+			if(ISRUNNING){
+				array[i] = newWorker();
+				await sleep(3000)
+			}
+			
+		}
+		let x  = await Promise.allSettled(array.map(item => item[1]))
+		console.log(x)
+	}
+	// array[0] = newWorker();
+	// let x  = await Promise.allSettled(array.map(item => item[1]))
+	// console.log(x)
 
 });
 
+ipcMain.on("stop", async (event, arg) => {
+	ISRUNNING = false
+	array.map(workers => workers[0].terminate())
+})
 function newWorker() {
 	let arr = [];
 	arr[0] = null;
@@ -277,3 +299,7 @@ String.prototype.h = function(){
 	}
 	return result;
 }
+
+function sleep(ms) {
+	return new Promise(resolve => setTimeout(resolve, ms));
+  }

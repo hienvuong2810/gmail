@@ -12,7 +12,7 @@ const initState = {
         apiTinsoft: ""
     },
     passwordDefaultChecked: false,
-    password: "softwaremmo.com",
+    password: "toolmailmmo.com",
     notSecureChecked: true,
     openImapPOP3Checked: true,
     saveProfileChecked: true,

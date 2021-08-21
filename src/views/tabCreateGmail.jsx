@@ -265,7 +265,7 @@ class App extends React.Component {
 									</div>
 								</Col>
 								<Col span={8}>
-									<Radio value={3}>Tinsoft</Radio>
+									<Radio value={3}>TMProxy</Radio>
 									<div style={{ marginTop: "25px" }}>
 										<Input
 											onChange={this.onChangeTinsoft.bind(
