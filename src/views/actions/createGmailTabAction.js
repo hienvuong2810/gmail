@@ -15,7 +15,6 @@ export const PASSWORD_DEFAULT_CHECKED = "PASSWORD_DEFAULT_CHECKED"
 export const PASSWORD = "PASSWORD"
 
 export function updateOtpChoose(x) {
-    console.log(x)
     return function (dispatch) {
         dispatch({
             type: OTP_SMS_CHOOSE,

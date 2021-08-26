@@ -7,30 +7,44 @@ const { ipcRenderer } = require("electron");
 
 class Splash extends React.Component {
 	async componentDidMount(){
-		// setInterval(() => {
-		// 	this.tick()
-		// }, 50)
 		await ipcRenderer.invoke('init')
-		let data = await ipcRenderer.invoke('key')
+		let data = await Promise.all([
+			this.tick(),
+			ipcRenderer.invoke('key'),
+			fetch('http://localhost:6969/version').then(result => result.json())
+		])
+		
 		this.props.dispatch({
 			type: "KEY",
-			payload: data.key
+			payload: data[1].key
 		})
 		this.props.dispatch({
 			type: "EXPRIED",
-			payload: data.exp
+			payload: data[1].expired
 		})
-		this.props.dispatch({
-			type: "STATE",
-			payload: 1
-		})		
+		if(data[2].version === "1.0.0"){
+			this.props.dispatch({
+				type: "STATE",
+				payload: 1
+			})
+		}else{
+			this.props.dispatch({
+				type: "NOTI_VERSION",
+				payload: "Vui lòng cập nhật phiên bản mới nhất tại trang chủ."
+			})
+		}
+		
 	}
-	tick() {
-		if (this.props.x.percent <= 100){
+	sleep(ms) {
+		return new Promise(resolve => setTimeout(resolve, ms));
+	  }
+	async tick() {
+		for (let i = 0; i < 100; i++){
 			this.props.dispatch({
 				type: "PERCENT",
 				payload: this.props.x.percent + 1
 			})
+			await this.sleep(20)
 		}
 	}
 	render() {
@@ -73,7 +87,7 @@ class Splash extends React.Component {
 								color: "rgba(0,0,0,.43)",
 							}}
 						>
-							&#10003; Bật IMAP/POP3
+							&#10003; Tỉ lệ live cực cao
 						</p>
 						<p
 							style={{
@@ -91,7 +105,7 @@ class Splash extends React.Component {
 								color: "rgba(0,0,0,.43)",
 							}}
 						>
-							&#10003; Thêm avatar, cùng nhiều tính năng khác
+							&#10003; Đổi IP sau mỗi lần đăng ký
 						</p>
 						<p
 							style={{
@@ -108,7 +122,7 @@ class Splash extends React.Component {
 					</Col>
 				</Row>
 				<Row style={{ padding: "0 90px" }}>
-					Đang bật tool
+					{this.props.x.notiVersion}
 					<Progress percent={this.props.x.percent} />
 				</Row>
 			</div>
@@ -117,7 +131,6 @@ class Splash extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-	console.log(state)
 	return {
 		x: state.data,
 	};

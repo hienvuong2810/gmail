@@ -15,6 +15,7 @@ const { TabPane } = Tabs;
 import { FileImageFilled, UndoOutlined } from "@ant-design/icons";
 import "./css.css";
 import { connect } from "react-redux";
+import emailValidator from 'email-validator';
 
 class App extends React.Component {
 	onChangeOTPSMS(e) {
@@ -109,8 +110,17 @@ class App extends React.Component {
 			type: "MAIL_RECOVER",
 			payload: e.target.value,
 		});
-	}
 
+	}
+	onValidateMailRecover(e){
+		if(!emailValidator.validate(e.target.value)){
+			this.props.dispatch({
+				type: "MAIL_RECOVER",
+				payload: "",
+			});
+			this.showNotification("Email khôi phục", "Email khôi phục không đúng định dạng")
+		}
+	}
 	onChangeAvatar(info) {
 		this.props.dispatch({
 			type: "SET_AVATAR",
@@ -139,7 +149,6 @@ class App extends React.Component {
 		});
 	}
 	onClickReloadIP() {
-		console.log("ád");
 	}
 
 	render() {
@@ -163,7 +172,7 @@ class App extends React.Component {
 								padding: "0 10px 0 10px",
 							}}
 						>
-							Setting OTP SMS
+							Cài đặt OTP SMS
 						</h1>
 						<Col span={24}>
 							<Radio.Group
@@ -427,9 +436,8 @@ class App extends React.Component {
 									disabled={
 										!this.props.setting.mailRecoverChecked
 									}
-									onChange={this.onChangeMailRecover.bind(
-										this
-									)}
+									onChange={this.onChangeMailRecover.bind(this)}
+									onBlur={this.onValidateMailRecover.bind(this)}
 									value={this.props.setting.mailRecover}
 								></Input>
 							</div>

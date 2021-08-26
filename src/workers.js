@@ -51,6 +51,9 @@ parentPort.on("message", async (data) => {
 if (!fs.existsSync(workerData.currentPath + "\\profile")) {
 	throw Error
 }
+
+
+
 let proxy = workerData.proxy.split(':')
 let uuid = uuidv4()
 let profile = workerData.currentPath + "\\profile\\" + uuid
@@ -74,26 +77,9 @@ try {
 	user_pref("network.proxy.socks_port",${proxy[1]});
 	user_pref("network.proxy.type", 1);` : ""))
 } catch (e) {
-	console.log(e)
 	process.exit(0)
 }
 
-console.log(proxy)
-async function a() {
-	let x = await puppeteer.launch({
-		headless: false,
-		defaultViewport: { width: 800, height: 800 },
-		args: ["--disable-infobars", "--disable-setuid-sandbox", "--no-sandbox", "-wait-for-browser", "--width=700", "--height=800", "--single-process"],
-		product: "firefox",
-		userDataDir: profile
-	});
-
-	let page = await x.pages()
-	page = page[0];
-	await x.close()
-	
-}
-a()
 async function runEmulator() {
 	try {
 		await waitToChange('a')
@@ -146,7 +132,10 @@ async function runEmulator() {
 			do {
 				orderID = await shareData.getPhone();
 				if (typeof orderID === "string") {
-					throw Error(orderID)
+					parentPort.postMessage({
+						type: "error", data: orderID
+					})
+					return;
 				}
 				await page.waitForTimeout(2000);
 				await page.waitForSelector(xPath[1], {
@@ -272,8 +261,7 @@ async function runEmulator() {
 				password: workerData.password,
 				recover: workerData.mailRecover
 			}
-		}
-		)
+		})
 		// 	// // // lessecure apps
 		if (workerData.notSecureChecked) {
 			await page.goto(xPath[3]);
@@ -287,22 +275,25 @@ async function runEmulator() {
 			await page.waitForTimeout(3000);
 		}
 		await browser.close()
+		if(workerData.ip.checked === 3){
+			removeProxy()
+		}
 		if(!workerData.saveProfileChecked){
 			fs.rmdirSync(profile, { recursive: true })
-		}if(workerData.ip.checked === 3){
-			removeProxy()
 		}
 		process.exit(1)
-	}catch(err){
-		if(!workerData.saveProfileChecked){
-			fs.rmdirSync(profile, { recursive: true })
-		}if(workerData.ip.checked === 3){
+	} catch(err) {
+		if(workerData.ip.checked === 3){
 			removeProxy()
 		}
-		throw Error(err.message)
+		if(!workerData.saveProfileChecked){
+			fs.rmdirSync(profile, { recursive: true })
+		}
+		throw new Error(err.message)
 	}
 }
-//runEmulator();
+
+runEmulator()
 
 function generateString() {
 	let chars = "abcdefghijklmnopqrstuvwxyz";
@@ -329,7 +320,6 @@ function waitToChange(type) {
 function removeProxy() {
 	fs.readFile(profile + "\\" + "prefs.js",{encoding: 'utf-8'}, function(err, data) {
 		if (err) throw error;
-		console.log(data)
 		let dataArray = data.split('\n'); 
 		const searchKeyword = 'network.proxy';
 	

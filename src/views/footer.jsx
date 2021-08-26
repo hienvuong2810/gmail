@@ -29,9 +29,9 @@ class Footer extends React.Component {
 					}}
 				>
 					<div style={{ float: "left", textAlign: "right" }}>
-						<Title type="success" level={4}>
+						{/* <Title type="success" level={4}>
 							Tổng số mail:
-						</Title>
+						</Title> */}
 					</div>
 					<div
 						style={{
@@ -42,9 +42,9 @@ class Footer extends React.Component {
 							paddingLeft: "20px",
 						}}
 					>
-						<Text type="success" style={{ marginBottom: "0.5rem" }}>
+						{/* <Text type="success" style={{ marginBottom: "0.5rem" }}>
 							{this.props.footer.registerSuccess}
-						</Text>
+						</Text> */}
 					</div>
 				</Col>
 				<Col span={8}>

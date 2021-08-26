@@ -3,10 +3,12 @@ const EXPRIED = "EXPRIED"
 const STATUS = "STATUS"
 const STATE = "STATE"
 const PERCENT = "PERCENT"
+const NOTI_VERSION = "NOTI_VERSION"
 const initState = {
     key: "",
     expired: "",
     version: "1.0.0",
+    notiVersion: "Đang bật tool",
     percent: 0,
     state: 0
 }
@@ -39,6 +41,11 @@ export default function reducer(state = {...initState}, action){
             return {
                 ...state,
                 percent: payload
+            }
+        case NOTI_VERSION:
+            return {
+                ...state,
+                notiVersion: payload
             }
         default:
             return state

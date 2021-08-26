@@ -19,18 +19,22 @@ const {
 	Worker
 } = require("worker_threads");
 const os	 = require('systeminformation');
-
+const exec = require('child_process').exec;
+const execSync = require('child_process').execSync;
 const Store = require('electron-store');
 const store = new Store({encryptionKey: 'gjeipgsp'});
 let list = store.get('list')
+if(!list){
+	list = []
+}
 ipcMain.handle('iv', (event) => {
 	return store.get('list');
 });
+let key = store.get('key')
 ipcMain.handle('init',async (event) => {
-	let key = store.get('key')
+	
 	if(!key){
 		let data = await Promise.all([os.system(), os.diskLayout(), socket.init()])
-		console.log("id" +  socket.getSID())
 		key = await socket.key(AES.encrypt(JSON.stringify(data), socket.getSID() + "key").toString())
 		store.set('key', key)
 		return true
@@ -40,7 +44,7 @@ ipcMain.handle('init',async (event) => {
 	}
 });
 ipcMain.handle('key',async (event) => {
-	let dataKey = await socket.getKey()
+	let dataKey = await socket.getKey(key)
 	return dataKey
 });
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -84,7 +88,21 @@ const createWindow = () => {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on("ready", createWindow);
+if (!gotTheLock) {
+	app.quit()
+} else {
+	app.on('second-instance', (event, commandLine, workingDirectory) => {
+	// Someone tried to run a second instance, we should focus our window.
+	if (myWindow) {
+		if (myWindow.isMinimized()) myWindow.restore()
+		myWindow.focus()
+	}
+	})
+
+	// Create myWindow, load the rest of the app, etc...
+	app.on("ready", createWindow);
+}
+
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
@@ -145,23 +163,28 @@ const proxy = require('./otp/proxy');
 
 
 ipcMain.on("click", async (event, arg) => {
-	if(properties.ip.checked === 3){
-		let x = await proxy.getNewProxy(properties.ip.apiTinsoft)
-		if (x){
-			properties.proxy = x
-		}else{
-			x = await proxy.getCurrentProxy(properties.ip.apiTinsoft)
+	ISRUNNING = true
+	while(ISRUNNING){
+		if(properties.ip.checked === 3){
+			let x = await proxy.getNewProxy(properties.ip.apiTinsoft)
 			if (x){
 				properties.proxy = x
 			}else{
-				mainWindow.webContents.send('err', "Lỗi proxy")
-				return 
+				x = await proxy.getCurrentProxy(properties.ip.apiTinsoft)
+				if (x){
+					properties.proxy = x
+				}else{
+					mainWindow.webContents.send('err', "Lỗi proxy")
+					return 
+				}
 			}
 		}
-	}
-	// console.log(properties.proxy)
-	ISRUNNING = true
-	while(ISRUNNING){
+		if(properties.ip.checked === 2){
+			execSync("netsh interface set interface "+ properties.ip.dcomName +" ADMIN=DISABLE")
+			await sleep(2000)
+			execSync("netsh interface set interface "+ properties.ip.dcomName +" ADMIN=ENABLE")
+			await sleep(2000)
+		}
 		array.length = 0
 		for(let i = 0; i < properties.threads; i++){
 			if(ISRUNNING){
@@ -171,7 +194,6 @@ ipcMain.on("click", async (event, arg) => {
 			
 		}
 		let x  = await Promise.allSettled(array.map(item => item[1]))
-		console.log(x)
 	}
 	// array[0] = newWorker();
 	// let x  = await Promise.allSettled(array.map(item => item[1]))
@@ -214,10 +236,16 @@ function newWorker() {
 				store.set('list', list)
 				mainWindow.webContents.send('update', list)
 			}
+			if(message.type === "error") {
+				mainWindow.focus()
+				mainWindow.moveTop()
+				mainWindow.webContents.send('err', message.data)
+			}
 		});
 		arr[0].on("error", (message) => {
+			mainWindow.focus()
+			mainWindow.moveTop()
 			mainWindow.webContents.send('err', message.message)
-			arr[0].terminate()
 		});
 		arr[0].on("exit", (exitCode) => {
 			if (exitCode == 1) {
@@ -230,7 +258,13 @@ function newWorker() {
 	return arr;
 }
 
+const puppeteer = require('puppeteer')
 
+ipcMain.on("open", (event, arg) => {
+	let pathPuppeteer = puppeteer._projectRoot.concat('\\.local-firefox\\win64-93.0a1\\firefox\\firefox.exe')	
+	let pathProfile = app.getAppPath() + "\\profile\\" + arg
+	exec(pathPuppeteer + " -profile " + pathProfile, (() => {}))
+})
 ipcMain.on("u", (event, arg) => {
 	switch (arg.case) {
 		case 1:

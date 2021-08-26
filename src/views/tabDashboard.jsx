@@ -5,51 +5,55 @@ const { Column, ColumnGroup } = Table;
 import { connect } from "react-redux";
 const { TabPane } = Tabs;
 const { ipcRenderer } = require("electron");
-import {Noti} from "./actions/dashboardTabAction"
-ipcRenderer.on('err', (event, data) => {
-	console.log(data)
-	Noti(data)
+import { Noti } from "./actions/dashboardTabAction";
+ipcRenderer.on("err", (event, data) => {
+	Noti(data);
 });
-const columns = [
-	{
-		title: "Gmail",
-		dataIndex: "gmail",
-		key: "gmail",
-		ellipsis: true,
-		width: "30%",
-		editable: true,
-	},
-	{
-		title: "Password",
-		dataIndex: "password",
-		key: "password",
-		ellipsis: true,
-		editable: true,
-		width: "30%",
-	},
-	{
-		title: "Mail Recover",
-		dataIndex: "recover",
-		key: "recover",
-		ellipsis: true,
-		editable: true,
-		width: "30%",
-	},
-	{
-		title: "Profile",
-		dataIndex: "profile",
-		key: "profile",
-		ellipsis: true,
-		width: "10%",
-		render: (text, record, index) => (
-			<div>
-				<a id={record.key} >Open</a>
-			</div>
-		),
-	},
-];
 
 const Dashboard = (props) => {
+	const columns = [
+		{
+			title: "Gmail",
+			dataIndex: "gmail",
+			key: "gmail",
+			ellipsis: true,
+			width: "30%",
+			editable: true,
+		},
+		{
+			title: "Password",
+			dataIndex: "password",
+			key: "password",
+			ellipsis: true,
+			editable: true,
+			width: "30%",
+		},
+		{
+			title: "Mail Recover",
+			dataIndex: "recover",
+			key: "recover",
+			ellipsis: true,
+			editable: true,
+			width: "30%",
+		},
+		{
+			title: "Profile",
+			dataIndex: "profile",
+			key: "profile",
+			ellipsis: true,
+			width: "10%",
+			render: (text, record, index) => (
+				<a
+					onClick={() => {
+						ipcRenderer.send("open", record.key);
+					}}
+					id={record.key}
+				>
+					Open
+				</a>
+			),
+		},
+	];
 	return (
 		<TabPane {...props}>
 			<Table

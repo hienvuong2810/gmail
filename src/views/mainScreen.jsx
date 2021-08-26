@@ -22,7 +22,7 @@ class Main extends React.Component {
                 <Layout style={{ padding: "0.8rem", backgroundColor: "white" }}>
                     <Content>
                         <Tabs
-                            defaultActiveKey="4"
+                            defaultActiveKey="1"
                             size="large"
                             type="card"
                             centered
@@ -41,7 +41,6 @@ class Main extends React.Component {
 	}
 }
 const mapStateToProps = (state) => {
-	console.log(state)
 	return {
 		data: state.data,
 	};

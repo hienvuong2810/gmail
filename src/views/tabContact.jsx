@@ -11,7 +11,7 @@ class Dashboard extends React.Component {
 		if(id === 1)
 		shell.openExternal("https://www.facebook.com/toolmailmmo")
 		else if(id === 2)
-		shell.openExternal("https://t.me/hienvuong23")
+		shell.openExternal("https://t.me/phanvuong28")
 		else if(id === 3)
 		shell.openExternal("https://forms.gle/Kngd5EDqSWrXbcST8")
 	}
@@ -95,7 +95,7 @@ class Dashboard extends React.Component {
 						</Col>
 						<Col span={8}>
 							<div className="contact">
-								<div className="logo-telegram" onClick={this.openBrowser.bind(this, 2)}> <a className="link">https://t.me/hienvuong23</a></div>
+								<div className="logo-telegram" onClick={this.openBrowser.bind(this, 2)}> <a className="link">https://t.me/phanvuong28</a></div>
 								
 							</div>
 						</Col>
