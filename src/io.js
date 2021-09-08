@@ -3,8 +3,9 @@ var sio =  {
     socket: null,
     SID: "1",
     init: () => {
-        // this.socket = io("https://www.toolmailmmo.com")
+        // 
         return new Promise((resolve, reject) => {
+            // this.socket = io("https://www.toolmailmmo.com")
             this.socket = io("http://localhost:6969")
             this.socket.on('connect', () => {
                this.SID = this.socket.id

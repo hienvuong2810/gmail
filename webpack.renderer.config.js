@@ -6,11 +6,13 @@ rules.push({
 });
 
 module.exports = {
+  // mode: 'production',
+  // devtool: false,
   // Put your normal webpack config below here
   module: {
     rules,
   },
   plugins: [
-   new BytenodeWebpackPlugin({ compileForElectron: true }),
+   //new BytenodeWebpackPlugin({ compileForElectron: true }),
   ],
 };

@@ -14,7 +14,7 @@ class Headers extends React.Component {
 				title={
 					<>
 						<UserOutlined />
-						<span style={{ margin: "10px" }}>{this.props.data.key}</span>
+						<span style={{ margin: "10px" }}> Mã sản phẩm: {this.props.data.key}</span>
 						<Badge
 							style={{ paddingBottom: "5px" }}
 							status="success"
@@ -25,7 +25,7 @@ class Headers extends React.Component {
 				subTitle={
 					<>
 						<FieldTimeOutlined />
-						<span style={{ marginLeft: "10px" }}><b>{this.props.data.expired}</b></span>
+						<span style={{ marginLeft: "10px" }}><b>Hạn dùng: {this.props.data.expired}</b></span>
 					</>
 				}
 				extra={[

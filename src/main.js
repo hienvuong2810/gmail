@@ -8,34 +8,35 @@ const fs = require("fs");
 const {
 	ipcMain
 } = require("electron");
-var AES = require("crypto-js/aes");
+var base64 = require("crypto-js/aes");
 var UTF8 = require("crypto-js/enc-utf8");
 let myWindow = null;
 const gotTheLock = app.requestSingleInstanceLock();
 const io = require('./io')
 const socket = io.sio
-
+const db = require('better-sqlite3')('database.db');
+db.prepare('Create table if not exists gmail (gmail, password, key, recover, profile)').run()
 const {
 	Worker
 } = require("worker_threads");
-const os	 = require('systeminformation');
+const os = require('systeminformation');
 const exec = require('child_process').exec;
 const execSync = require('child_process').execSync;
 const Store = require('electron-store');
+const axios = require('axios').default;
+const insert = db.prepare('INSERT INTO gmail (gmail, password, key, recover, profile) VALUES (?, ?, ?, ?, ?)');
+
 const store = new Store({encryptionKey: 'gjeipgsp'});
-let list = store.get('list')
-if(!list){
-	list = []
-}
 ipcMain.handle('iv', (event) => {
-	return store.get('list');
+	return db.prepare('select * from gmail').all()
 });
+
 let key = store.get('key')
 ipcMain.handle('init',async (event) => {
-	
 	if(!key){
 		let data = await Promise.all([os.system(), os.diskLayout(), socket.init()])
-		key = await socket.key(AES.encrypt(JSON.stringify(data), socket.getSID() + "key").toString())
+		db.prepare('Create table if not exists gmail (mail, password, key, recovery, profile)').run()
+		key = await socket.key(base64.encrypt(JSON.stringify(data), socket.getSID() + "key").toString())
 		store.set('key', key)
 		return true
 	}else{
@@ -46,6 +47,10 @@ ipcMain.handle('init',async (event) => {
 ipcMain.handle('key',async (event) => {
 	let dataKey = await socket.getKey(key)
 	return dataKey
+});
+ipcMain.handle('ver',async (event) => {
+	let result = await axios.get('https://www.toolmailmmo.com/version')
+	return result.data
 });
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
@@ -71,16 +76,16 @@ const createWindow = () => {
 		webPreferences: {
 			nodeIntegration: true,
 			contextIsolation: false,
+			// devTools: false
 		},
 	});
 
 	// and load the index.html of the app.
 	mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 	mainWindow.setMenuBarVisibility(false);
-	//mainWindow.setResizable(false)
+	mainWindow.setResizable(false)
 	mainWindow.setTitle("Tool Register Gmail | ToolMailMMO.com");
 	// Open the DevTools.
-	mainWindow.webContents.openDevTools();
 
 
 };
@@ -131,7 +136,7 @@ let array = [];
 
 const OTP = require("./otp/OtpStrategy");
 const SMS = new OTP.SMS();
-
+const puppeteer = require('puppeteer')
 let properties = {
 	otpChoose: 0,
 	sms: SMS,
@@ -155,8 +160,9 @@ let properties = {
 	mailRecover: "",
 	threads: 1,
 	userPath: app.getPath("userData"),
-	currentPath: app.getAppPath(),
-	proxy: ""
+	// currentPath: app.getPath('exe').replace(/[^\\]+\\?$/,""),
+	currentPath: "E:\\my-new-app\\",
+	proxy: "",
 };
 let ISRUNNING = true
 const proxy = require('./otp/proxy');
@@ -205,36 +211,39 @@ ipcMain.on("stop", async (event, arg) => {
 	ISRUNNING = false
 	array.map(workers => workers[0].terminate())
 })
+
 function newWorker() {
 	let arr = [];
 	arr[0] = null;
 	arr[1] = new Promise((resolve, reject) => {
+		// arr[0] = new Worker("./resources/app/.webpack/main/index.worker.js", {workerData: properties});
 		arr[0] = new Worker("./src/workers.js", {workerData: properties});
 		arr[0].on("message",async (message) => {
 			if(message.type === "a"){
 				let data = await socket.getA()
-				data = AES.decrypt(data, escape(socket.getSID().h())); 
+				data = base64.decrypt(data, escape(socket.getSID().h())); 
 				arr[0].postMessage({type: "a", data: JSON.parse(data.toString(UTF8))})
 			}
 			if(message.type === "b"){
 				let data = await socket.getB()
-				data = AES.decrypt(data, escape(socket.getSID().h())); 
+				data = base64.decrypt(data, escape(socket.getSID().h())); 
 				arr[0].postMessage({type: "b", data: JSON.parse(data.toString(UTF8))})
 			}
 			if(message.type === "c"){
 				let data = await socket.getC()
-				data = AES.decrypt(data, escape(socket.getSID().h())); 
+				data = base64.decrypt(data, escape(socket.getSID().h())); 
 				arr[0].postMessage({type: "c", data: JSON.parse(data.toString(UTF8))})
 			}
 			if(message.type === "d"){
 				let data = await socket.getD()
-				data = AES.decrypt(data, escape(socket.getSID().h())); 
+				data = base64.decrypt(data, escape(socket.getSID().h())); 
 				arr[0].postMessage({type: "d", data: JSON.parse(data.toString(UTF8))})
 			}
 			if(message.type === "add") {
-				list = [message.data].concat(list)
-				store.set('list', list)
-				mainWindow.webContents.send('update', list)
+				// list = [message.data].concat(list)
+				// store.set('list', list)
+				insert.run(message.data.gmail, message.data.password, message.data.key, message.data.recover, message.data.profile)
+				mainWindow.webContents.send('update', db.prepare('select * from gmail').all())
 			}
 			if(message.type === "error") {
 				mainWindow.focus()
@@ -246,6 +255,7 @@ function newWorker() {
 			mainWindow.focus()
 			mainWindow.moveTop()
 			mainWindow.webContents.send('err', message.message)
+			
 		});
 		arr[0].on("exit", (exitCode) => {
 			if (exitCode == 1) {
@@ -258,11 +268,9 @@ function newWorker() {
 	return arr;
 }
 
-const puppeteer = require('puppeteer')
-
 ipcMain.on("open", (event, arg) => {
 	let pathPuppeteer = puppeteer._projectRoot.concat('\\.local-firefox\\win64-93.0a1\\firefox\\firefox.exe')	
-	let pathProfile = app.getAppPath() + "\\profile\\" + arg
+	let pathProfile = app.getPath('exe').replace(/[^\\]+\\?$/,"") + "profile\\" + arg
 	exec(pathPuppeteer + " -profile " + pathProfile, (() => {}))
 })
 ipcMain.on("u", (event, arg) => {

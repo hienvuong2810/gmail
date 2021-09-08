@@ -183,7 +183,7 @@ class App extends React.Component {
 									justifyContent: "space-evenly",
 								}}
 							>
-								<Radio value={1}>Otpsim</Radio>
+								<Radio value={1}>Codesim</Radio>
 								<Radio value={2}>Chothuesimcode</Radio>
 							</Radio.Group>
 							<div style={{ marginTop: "25px" }}>
@@ -334,7 +334,7 @@ class App extends React.Component {
 									Bật không an toàn
 								</Checkbox>
 
-								{/* <Checkbox
+								<Checkbox
 									checked={
 										this.props.setting.openImapPOP3Checked
 									}
@@ -344,8 +344,8 @@ class App extends React.Component {
 										marginLeft: "0px",
 									}}
 								>
-									Bật IMAP/POP3
-								</Checkbox> */}
+									Tạo kênh Youtube
+								</Checkbox>
 							</div>
 						</Col>
 
@@ -443,7 +443,7 @@ class App extends React.Component {
 							</div>
 						</Col>
 
-						{/* <Col span={4.8}>
+						<Col span={4.8}>
 							<div
 								style={{
 									display: "flex",
@@ -474,7 +474,7 @@ class App extends React.Component {
 									</Upload>
 								</Checkbox>
 							</div>
-						</Col> */}
+						</Col>
 					</Row>
 				</div>
 			</TabPane>

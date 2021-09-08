@@ -11,7 +11,7 @@ class Splash extends React.Component {
 		let data = await Promise.all([
 			this.tick(),
 			ipcRenderer.invoke('key'),
-			fetch('http://localhost:6969/version').then(result => result.json())
+			ipcRenderer.invoke('ver')
 		])
 		
 		this.props.dispatch({

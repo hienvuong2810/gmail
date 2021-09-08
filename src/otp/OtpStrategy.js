@@ -6,25 +6,25 @@ var OtpSMS = function () {
         return result.data.data.balance
     }
     this.getPhone = async function (apiKey) {
-        var result = await axios.get("http://otpsim.com/api/phones/request?token=" + apiKey + "&service=3")
-        if(result.data.status_code === 200){
-            return [result.data.data.session, result.data.data.phone_number]
+        var result = await axios.get("http://api.codesim.net/api/CodeSim/DangKy_GiaoDich?apikey=" + apiKey + "&dichvu_id=2&so_sms_nhan=1")
+        if(result.data.stt === 1){
+            return [result.data.data.id_giaodich, result.data.data.phoneNumber]
         }else{
-            return result.data.message
+            return result.data.msg
         }
         
     }
     this.getCode = async function (apiKey, id) {
-        var result = await axios.get("http://otpsim.com/api/sessions/" + id + "?token=" + apiKey)
-        if(result.data.data.status === 0){
-            return result.data.data.messages[0].otp
+        var result = await axios.get("http://api.codesim.net/api/CodeSim/KiemTraGiaoDich?apikey=" + apiKey + "&giaodich_id=" + id)
+        if(result.data.data.listSms.length !== 0){
+            return result.data.data.listSms[0].number
         }else{
             return ""
         }
         
     }
     this.cancel = async function (apiKey, id) {
-        var result = await axios.get("http://otpsim.com/api/sessions/cancel?session=" + id + "?token=" + apiKey)
+        var result = await axios.get("http://api.codesim.net/api/CodeSim/HuyGiaoDich?apikey=" + apiKey + "&giaodich_id=" + id)
         return result.data
     }
 };
@@ -59,7 +59,7 @@ var Chothuesimcode = function () {
 
 var SMS = function () {
     this.otpProvider = "";
-    this.apiKey = "5742f84e3e9bdce7d6f244342f84be30";
+    this.apiKey = "";
 };
 const otpSMS = new OtpSMS()
 const ctsc = new Chothuesimcode()

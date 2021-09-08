@@ -30,16 +30,16 @@ module.exports = [
   //       }
   //   }
   // }
-  // {
-  //   test: /\.(m?js|node)$/,
-  //   parser: { amd: false },
-  //   use: {
-  //     loader: '@marshallofsound/webpack-asset-relocator-loader',
-  //     options: {
-  //       outputAssetBase: 'native_modules',
-  //     },
-  //   },
-  // },
+  {
+    test: /\.(m?js|node)$/,
+    parser: { amd: false },
+    use: {
+      loader: '@vercel/webpack-asset-relocator-loader',
+      options: {
+        outputAssetBase: 'native_modules',
+      },
+    },
+  },
   // Put your webpack loader rules in this array.  This is where you would put
   // your ts-loader configuration for instance:
   /**
